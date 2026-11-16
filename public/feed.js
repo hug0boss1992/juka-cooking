@@ -55,17 +55,29 @@ function renderPosts(panelId, posts, label, offset = 0) {
   for (const [index, post] of posts.entries()) {
     const item = document.createElement('li');
     const link = document.createElement('a');
+    const cover = document.createElement('div');
     const image = document.createElement('img');
+    const title = document.createElement('h3');
     link.href = post.permalink;
+    cover.className = 'feed-cover';
+    title.className = 'feed-title';
+    title.textContent = post.titleOverride || post.title || `${label} ${offset + index + 1}`;
     image.src = post.image;
-    image.alt = typeof post.alt === 'string' && post.alt.trim() ? post.alt : `${label} ${offset + index + 1}`;
+    image.alt = post.alt && post.alt !== title.textContent ? post.alt : '';
     image.loading = 'lazy';
     image.decoding = 'async';
     image.addEventListener('error', () => {
       item.remove();
       updateVisibility();
     }, { once: true });
-    link.append(image);
+    cover.append(image);
+    if (post.ad === true) {
+      const badge = document.createElement('span');
+      badge.className = 'ad';
+      badge.textContent = 'Anzeige';
+      cover.append(badge);
+    }
+    link.append(cover, title);
     item.append(link);
     grid.append(item);
     firstLink ??= link;

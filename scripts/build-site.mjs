@@ -72,15 +72,22 @@ ${profiles.map(({ label, href }) => `      <a href="${href}" aria-label="${label
     </nav>`;
 }
 
+function renderContactLinks(links) {
+  const contactLinks = links.filter(({ label }) => !profileIcons.has(label.toLowerCase()));
+  if (!contactLinks.length) return '';
+
+  const items = contactLinks.map(({ label, href }) => `<a href="${href}">${label}</a>`);
+  return `<nav class="contact-links" aria-label="Kontakt und weitere Links">${items.join('')}</nav>`;
+}
+
 const [config, template] = await Promise.all([
   readFile(new URL('links.md', root), 'utf8'),
   readFile(new URL('./index.template.html', import.meta.url), 'utf8'),
 ]);
 try {
   const { bio, links, partners } = readContent(config);
-  const buttons = links.map(({ label, href }, index) => `            <a${index === 0 ? ' class="primary"' : ''} href="${href}">${label}</a>`);
   const page = template.replace('<!-- BIO -->', () => bio.join('<br>'))
-    .replace('            <!-- LINKS -->', () => buttons.join('\n'))
+    .replace('<!-- CONTACT_LINKS -->', () => renderContactLinks(links))
     .replace('<!-- PARTNER_NAV -->', () => partners.length ? '<a href="#empfehlungen">Empfehlungen</a>' : '')
     .replace('<!-- PROFILE_NAV -->', () => renderProfileLinks(links))
     .replace('<!-- PARTNERLINKS -->', () => renderPartners(partners));

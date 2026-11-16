@@ -2,6 +2,7 @@ import { spawnSync } from 'node:child_process';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
 import { getToken, listVideos, storeRefreshToken } from './tiktok-api.mjs';
+import { feedTitle, isAdvertised } from './feed-title.mjs';
 
 const output = new URL('../public/', import.meta.url);
 const tiktokCdn = /(?:^|\.)tiktokcdn(?:-us|-eu)?\.com$/i;
@@ -73,10 +74,13 @@ export async function buildTikTokFeed(videos, {
   for (let index = 0; index < candidates.length; index += 4) {
     const batch = await Promise.allSettled(candidates.slice(index, index + 4).map(async (video) => {
       const bytes = await loadCover(video.cover_image_url, fetchResource);
-      const alt = (video.title || video.video_description || '').replace(/\s+/g, ' ').trim().slice(0, 150);
+      const title = feedTitle(video.title) || feedTitle(video.video_description);
       const signature = { words: words(video.video_description || video.title), hashes: fingerprint(bytes) };
       if (instagram.some((post) => isCrosspost(signature, post))) return null;
-      return { signature, entry: { permalink: video.permalink, image: `tiktok/${video.id}.webp`, alt }, bytes: encode(bytes) };
+      return { signature, entry: {
+        permalink: video.permalink, image: `tiktok/${video.id}.webp`, title,
+        ...(isAdvertised(video.video_description || video.title) ? { ad: true } : {}),
+      }, bytes: encode(bytes) };
     }));
     for (const result of batch) {
       if (result.status === 'rejected') failed++;

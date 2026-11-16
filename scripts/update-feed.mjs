@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises';
 import { pathToFileURL } from 'node:url';
+import { feedTitle, isAdvertised } from './feed-title.mjs';
 
 const output = new URL('../public/', import.meta.url);
 const feedEndpoint = /^https:\/\/feeds\.behold\.so\/[a-z0-9_-]+\/?$/i;
@@ -46,10 +47,12 @@ async function downloadPost({ post, date, permalink }, index, fetchResource) {
   }
 
   const filename = `${createHash('sha256').update(bytes).digest('hex').slice(0, 24)}.webp`;
-  const alt = cleanText(post.altText) || cleanText(post.prunedCaption) || cleanText(post.caption);
-  const caption = cleanText(post.prunedCaption) || cleanText(post.caption);
+  const alt = cleanText(post.altText);
+  const description = post.prunedCaption || post.caption;
   return { bytes, filename, entry: {
-    permalink, image: `feed/${filename}`, alt: alt.slice(0, 160), caption: caption.slice(0, 300),
+    permalink, image: `feed/${filename}`, alt: alt.slice(0, 160), caption: cleanText(description).slice(0, 300),
+    title: feedTitle(post.title) || feedTitle(description),
+    ...(isAdvertised(post.caption || description) ? { ad: true } : {}),
     publishedAt: new Date(date).toISOString(),
   } };
 }
@@ -87,7 +90,12 @@ export async function updateFeed(feedUrl, { directory = output, fetchResource = 
   const merged = new Map(recent.map(({ id }, index) => [id, downloads[index].entry]));
   for (const [index, entry] of archived.entries()) {
     const { id } = postLink(entry.permalink, index);
-    if (hidden.has(id) || merged.has(id)) continue;
+    if (hidden.has(id)) continue;
+    const latest = merged.get(id);
+    if (latest) {
+      if (entry.titleOverride) latest.titleOverride = entry.titleOverride;
+      continue;
+    }
     if (!/^feed\/[a-f0-9]{24}\.webp$/.test(entry.image)) throw new Error('Ungültiges Titelbild im Instagram-Archiv.');
     merged.set(id, entry);
   }

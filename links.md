@@ -4,8 +4,8 @@ Ergänze oder lösche einen Link als eigene Zeile. Die Reihenfolge hier ist die 
 
 ## Bio
 
-Kreative Küche & einfache Rezepte
-UGC & Kooperationen
+Einfache Rezepte für jeden Tag.
+UGC & Kooperationen mit Marken, die ich wirklich nutze.
 
 ## Links
 

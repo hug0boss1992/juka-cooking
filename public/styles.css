@@ -48,7 +48,7 @@ h1, h2 { font-family: var(--serif); }
   grid-template-columns: clamp(9rem, 19vw, 12.5rem) minmax(0, 1fr);
   align-items: center;
   gap: clamp(1.65rem, 4.2vw, 3.8rem);
-  padding-block: clamp(2.8rem, 5.8vw, 5rem);
+  padding-block: clamp(2rem, 4.7vw, 3.45rem);
 }
 .portrait {
   padding: 5px;
@@ -67,30 +67,15 @@ h1, h2 { font-family: var(--serif); }
 }
 
 .profile h1 { margin: 0; font-size: clamp(3.45rem, 8vw, 5.5rem); line-height: 0.98; letter-spacing: -0.055em; }
-.handle { margin: 0.7rem 0 0; color: var(--clay); font-size: 0.96rem; font-weight: 700; }
-.bio { margin: 0.85rem 0 1.25rem; color: var(--muted); font-size: clamp(1rem, 2vw, 1.13rem); line-height: 1.6; }
+.tagline { margin: 0.3rem 0 0; color: var(--clay); font: italic clamp(2.05rem, 5.5vw, 4.05rem)/1.02 var(--serif); letter-spacing: -0.04em; }
+.handle { margin: 0.8rem 0 0; color: var(--green); font-size: 0.92rem; font-weight: 700; }
+.bio { margin: 0.55rem 0 0; color: var(--muted); font-size: clamp(0.95rem, 2vw, 1.12rem); line-height: 1.55; }
+.contact-links { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+.contact-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--green); font-size: 0.9rem; font-weight: 650; text-underline-offset: 0.22em; }
+.partner:hover { text-decoration: underline; text-underline-offset: 0.2em; }
 
-.channels { display: flex; flex-wrap: wrap; gap: 0.55rem; }
-.channels a {
-  display: grid;
-  min-width: 0;
-  min-height: 46px;
-  place-items: center;
-  padding: 0.5rem 1.1rem;
-  border: 1px solid #78846e;
-  border-radius: 999px;
-  background: var(--paper);
-  font-size: 0.92rem;
-  font-weight: 700;
-  overflow-wrap: anywhere;
-  text-align: center;
-  text-decoration: none;
-}
-.channels .primary { border-color: var(--green); background: var(--green); color: #fff; }
-.channels a:hover, .partner:hover { text-decoration: underline; text-underline-offset: 0.2em; }
-
-.partners, .recipes { padding-block: clamp(1.65rem, 5.1vw, 3.8rem); }
-.partners { border-top: 1px solid var(--line); }
+.partners { padding-block: clamp(1.25rem, 3vw, 2rem) clamp(1.5rem, 3vw, 2.4rem); }
+.recipes { border-top: 1px solid var(--line); padding-block: clamp(1.65rem, 4vw, 3.25rem); }
 .partners h2, .recipes h2 { margin: 0; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -0.036em; }
 .recipes-heading { display: flex; align-items: end; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem 1.75rem; margin-bottom: 1.25rem; }
 .partner-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem; margin-top: 1rem; }
@@ -127,9 +112,12 @@ h1, h2 { font-family: var(--serif); }
 .feed-more { display: block; margin: 0.85rem auto 0; }
 .feed-empty { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .feed-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.65rem, 2vw, 1.3rem); padding: 0; margin: 0; list-style: none; }
-.feed-grid a { display: block; border-radius: 1rem; box-shadow: 0 4px 15px #5d4c3810; }
+.feed-grid a { display: flex; flex-direction: column; height: 100%; border: 1px solid #e9e2d8; border-radius: 1rem; overflow: hidden; background: var(--paper); box-shadow: 0 4px 15px #5d4c3810; text-decoration: none; }
 .feed-grid a:hover { outline: 2px solid var(--green); outline-offset: 2px; }
-.feed-grid img { display: block; width: 100%; aspect-ratio: 4 / 5; border-radius: inherit; background: #ede7da; object-fit: cover; }
+.feed-cover { position: relative; }
+.feed-cover .ad { position: absolute; inset: 0.5rem 0.5rem auto auto; }
+.feed-grid img { display: block; width: 100%; aspect-ratio: 4 / 5; background: #ede7da; object-fit: cover; }
+.feed-title { margin: 0; padding: 0.75rem clamp(0.55rem, 1.5vw, 1rem); overflow-wrap: anywhere; font-size: clamp(0.86rem, 2vw, 1.05rem); line-height: 1.35; }
 
 .footer { border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
 .footer-inner { min-height: 4rem; }
@@ -137,14 +125,15 @@ h1, h2 { font-family: var(--serif); }
 @media (max-width: 36rem) {
   .site-header nav, .footer nav { gap: 0 0.75rem; }
   .site-header nav a, .footer nav a { font-size: 0.8rem; }
-  .profile { grid-template-columns: 1fr; justify-items: center; gap: 1.05rem; padding-block: 2.15rem; text-align: center; }
-  .portrait { width: clamp(6.8rem, 26vw, 8.4rem); padding: 3px; }
+  .profile { grid-template-columns: 1fr; justify-items: center; gap: 0.75rem; padding-block: 1.35rem 0.7rem; text-align: center; }
+  .portrait { width: clamp(5.35rem, 23vw, 7rem); padding: 3px; }
   .portrait img { border-width: 3px; }
-  .channels { justify-content: center; }
-  .channels a { padding-inline: 0.85rem; }
+  .contact-links { justify-content: center; }
   .feed-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .feed-grid a { border-radius: 0.75rem; }
+  .partners h2 { font-size: clamp(1.55rem, 6.8vw, 1.9rem); }
   .partner-grid { grid-template-columns: 1fr; }
+  .partner { padding-block: 0.7rem; }
   .footer-inner { flex-wrap: wrap; padding-block: 0.7rem; }
 }
 
