@@ -11,7 +11,6 @@ UGC & Kooperationen
 
 - [Instagram](https://www.instagram.com/juka.cooking/)
 - [TikTok](https://www.tiktok.com/@juka.cooking)
-- [Threads](https://www.threads.net/@juka.cooking)
 - [E-Mail](mailto:juka.cooking@gmail.com)
 
 ## Partnerlinks

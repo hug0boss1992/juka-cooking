@@ -47,8 +47,10 @@ function renderPartners(partners) {
         <span><strong>${label}</strong>${note ? `<small>${note}</small>` : ''}</span>
         <span class="ad">Anzeige</span>
       </a>`);
-  return `<section class="partners" aria-labelledby="partners-title">
-      <h2 id="partners-title">Meine Empfehlungen</h2>${items.join('')}
+  return `<section id="empfehlungen" class="wrap partners" aria-labelledby="partners-title">
+      <h2 id="partners-title">Meine Empfehlungen</h2>
+      <div class="partner-grid">${items.join('')}
+      </div>
     </section>`;
 }
 
@@ -58,9 +60,10 @@ const [config, template] = await Promise.all([
 ]);
 try {
   const { bio, links, partners } = readContent(config);
-  const buttons = links.map(({ label, href }, index) => `      <a${index === 0 ? ' class="primary"' : ''} href="${href}">${label}</a>`);
+  const buttons = links.map(({ label, href }, index) => `            <a${index === 0 ? ' class="primary"' : ''} href="${href}">${label}</a>`);
   const page = template.replace('<!-- BIO -->', () => bio.join('<br>'))
-    .replace('      <!-- LINKS -->', () => buttons.join('\n'))
+    .replace('            <!-- LINKS -->', () => buttons.join('\n'))
+    .replace('<!-- PARTNER_NAV -->', () => partners.length ? '<a href="#empfehlungen">Empfehlungen</a>' : '')
     .replace('<!-- PARTNERLINKS -->', () => renderPartners(partners));
   await writeFile(new URL('public/index.html', root), page);
 } catch (error) {

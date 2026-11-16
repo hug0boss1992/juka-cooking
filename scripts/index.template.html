@@ -11,26 +11,41 @@
   <link rel="stylesheet" href="styles.css">
   <script src="feed.js" defer></script>
 </head>
-<body>
-  <main class="page">
-    <header class="profile">
-      <img class="portrait" src="profil.jpg" alt="Porträt von Justyna" width="112" height="112">
-      <h1>Justyna</h1>
-      <p class="handle">@juka.cooking</p>
-      <p class="bio"><!-- BIO --></p>
-    </header>
+<body id="start">
+  <header class="site-header">
+    <div class="wrap site-header-inner">
+      <a class="brand" href="#start">juka<span>.</span>cooking</a>
+      <nav aria-label="Seitennavigation">
+        <a href="#beitraege">Beiträge</a>
+        <!-- PARTNER_NAV -->
+      </nav>
+    </div>
+  </header>
 
-    <nav class="channels" aria-label="Social Media und Kontakt">
-      <!-- LINKS -->
-    </nav>
+  <main>
+    <section class="hero" aria-labelledby="profile-title">
+      <div class="wrap profile">
+        <div class="portrait">
+          <img src="profil.jpg" alt="Porträt von Justyna" width="192" height="192">
+        </div>
+        <div class="profile-copy">
+          <h1 id="profile-title">Justyna</h1>
+          <p class="handle">@juka.cooking</p>
+          <p class="bio"><!-- BIO --></p>
+          <nav class="channels" aria-label="Social Media und Kontakt">
+            <!-- LINKS -->
+          </nav>
+        </div>
+      </div>
+    </section>
 
-    <!-- PARTNERLINKS -->
-
-    <section class="recipes" aria-labelledby="recipes-title">
-      <h2 id="recipes-title">Beiträge</h2>
-      <div class="feed-tabs" role="tablist" aria-label="Plattform auswählen" hidden>
-        <button type="button" id="instagram-tab" role="tab" aria-controls="instagram-panel" aria-selected="true">Instagram</button>
-        <button type="button" id="tiktok-tab" role="tab" aria-controls="tiktok-panel" aria-selected="false" tabindex="-1">TikTok</button>
+    <section id="beitraege" class="wrap recipes" aria-labelledby="recipes-title">
+      <div class="recipes-heading">
+        <h2 id="recipes-title">Rezepte &amp; Beiträge</h2>
+        <div class="feed-tabs" role="tablist" aria-label="Plattform auswählen" hidden>
+          <button type="button" id="instagram-tab" role="tab" aria-controls="instagram-panel" aria-selected="true">Instagram</button>
+          <button type="button" id="tiktok-tab" role="tab" aria-controls="tiktok-panel" aria-selected="false" tabindex="-1">TikTok</button>
+        </div>
       </div>
       <div id="instagram-panel" role="tabpanel" aria-labelledby="instagram-tab" tabindex="0">
         <p class="feed-empty">Hier erscheinen meine Instagram-Beiträge.</p>
@@ -43,12 +58,17 @@
       </div>
     </section>
 
-    <footer class="footer">
+    <!-- PARTNERLINKS -->
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a class="brand" href="#start">juka<span>.</span>cooking</a>
       <nav aria-label="Rechtliches">
         <a href="impressum.html">Impressum</a>
         <a href="datenschutz.html">Datenschutz</a>
       </nav>
-    </footer>
-  </main>
+    </div>
+  </footer>
 </body>
 </html>
