@@ -31,6 +31,11 @@ h1, h2 { font-family: var(--serif); }
 .site-header nav a, .footer nav a { display: inline-flex; min-height: 44px; align-items: center; text-underline-offset: 0.2em; }
 .site-header nav a { color: var(--ink); font-size: 0.88rem; font-weight: 650; text-decoration: none; }
 .site-header nav a:hover { text-decoration: underline; }
+.section-links { margin-inline-start: auto; }
+.site-header .profile-links { flex-wrap: nowrap; gap: 0.3rem; }
+.profile-links a { justify-content: center; width: 44px; border: 1px solid var(--line); border-radius: 50%; }
+.profile-links a:hover { background: #e8ecdf; border-color: var(--green); }
+.profile-links svg { width: 19px; height: 19px; }
 .brand { color: #3a4932; font: 700 clamp(1.2rem, 3vw, 1.6rem)/1 var(--serif); text-decoration: none; white-space: nowrap; }
 .brand span { color: #bd784f; }
 
@@ -141,6 +146,12 @@ h1, h2 { font-family: var(--serif); }
   .feed-grid a { border-radius: 0.75rem; }
   .partner-grid { grid-template-columns: 1fr; }
   .footer-inner { flex-wrap: wrap; padding-block: 0.7rem; }
+}
+
+@media (max-width: 29rem) {
+  .site-header-inner { display: grid; grid-template-columns: 1fr auto; padding-top: 0.35rem; }
+  .site-header .profile-links { grid-column: 2; grid-row: 1; justify-self: end; }
+  .section-links { grid-column: 1 / -1; margin-inline-start: 0; }
 }
 
 .legal { width: min(100%, 46rem); margin-inline: auto; padding: 2rem 1.25rem; line-height: 1.65; overflow-wrap: anywhere; }
