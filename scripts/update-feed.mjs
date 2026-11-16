@@ -58,7 +58,8 @@ export async function updateFeed(feedUrl, { directory = output, fetchResource = 
   if (!feedEndpoint.test(feedUrl)) throw new Error('BEHOLD_FEED_URL muss eine öffentliche feeds.behold.so-Adresse sein.');
   const response = await request(feedUrl, 'application/json', fetchResource);
   const feed = await response.json();
-  if (cleanText(feed?.username).toLowerCase() !== 'juka.cooking' || !Array.isArray(feed.posts)) {
+  // Some Behold feeds omit the username from their account metadata.
+  if (!Array.isArray(feed?.posts) || (feed.username !== undefined && cleanText(feed.username).toLowerCase() !== 'juka.cooking')) {
     throw new Error('Erwartet wird ein Behold-JSON-Feed für @juka.cooking.');
   }
 
