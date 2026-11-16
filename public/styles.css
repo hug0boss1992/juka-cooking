@@ -84,7 +84,7 @@ h1, h2 { font-family: Georgia, "Times New Roman", serif; }
 .ad { padding: 0.2rem 0.55rem; border-radius: 999px; background: #f4e6d9; color: var(--clay); font-size: 0.75rem; font-weight: 700; }
 
 .feed-tabs { display: flex; gap: 0.5rem; margin-bottom: 0.85rem; }
-.feed-tabs button {
+.feed-tabs button, .feed-more {
   min-height: 44px;
   padding: 0.45rem 0.9rem;
   border: 1px solid var(--line);
@@ -97,6 +97,7 @@ h1, h2 { font-family: Georgia, "Times New Roman", serif; }
   font-weight: 700;
 }
 .feed-tabs [aria-selected="true"] { border-color: var(--green); background: var(--green); color: #fff; }
+.feed-more { display: block; margin: 0.85rem auto 0; }
 .feed-empty { margin: 0; color: var(--muted); font-size: 0.9rem; }
 .feed-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5rem; padding: 0; margin: 0; list-style: none; }
 .feed-grid a { display: block; border-radius: 0.65rem; }

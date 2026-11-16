@@ -41,7 +41,7 @@ async function loadPosts(file) {
   }
 }
 
-function renderPosts(panelId, posts, label) {
+function renderPosts(panelId, posts, label, offset = 0) {
   const panel = document.getElementById(panelId);
   const grid = panel.querySelector('.feed-grid');
   const empty = panel.querySelector('.feed-empty');
@@ -51,13 +51,14 @@ function renderPosts(panelId, posts, label) {
     empty.hidden = !grid.hidden;
   }
 
+  let firstLink;
   for (const [index, post] of posts.entries()) {
     const item = document.createElement('li');
     const link = document.createElement('a');
     const image = document.createElement('img');
     link.href = post.permalink;
     image.src = post.image;
-    image.alt = typeof post.alt === 'string' && post.alt.trim() ? post.alt : `${label} ${index + 1}`;
+    image.alt = typeof post.alt === 'string' && post.alt.trim() ? post.alt : `${label} ${offset + index + 1}`;
     image.loading = 'lazy';
     image.decoding = 'async';
     image.addEventListener('error', () => {
@@ -67,9 +68,11 @@ function renderPosts(panelId, posts, label) {
     link.append(image);
     item.append(link);
     grid.append(item);
+    firstLink ??= link;
   }
 
   updateVisibility();
+  return firstLink;
 }
 
 function mixedTikTokPosts(posts) {
@@ -94,8 +97,21 @@ function mixedTikTokPosts(posts) {
 }
 
 loadPosts('./feed.json').then((posts) => {
-  const visible = posts.filter((post) => instagramPost.test(post?.permalink) && instagramImage.test(post.image)).slice(0, 6);
-  renderPosts('instagram-panel', visible, 'Instagram-Beitrag');
+  const archive = posts.filter((post) => instagramPost.test(post?.permalink) && instagramImage.test(post.image));
+  const more = document.querySelector('.feed-more');
+  const pageSize = 12;
+  let offset = 0;
+
+  function showNextPosts() {
+    const batch = archive.slice(offset, offset + pageSize);
+    const firstLink = renderPosts('instagram-panel', batch, 'Instagram-Beitrag', offset);
+    offset += batch.length;
+    more.hidden = offset >= archive.length;
+    return firstLink;
+  }
+
+  showNextPosts();
+  more.addEventListener('click', () => showNextPosts()?.focus());
 });
 
 loadPosts('./tiktok.json').then((posts) => {
