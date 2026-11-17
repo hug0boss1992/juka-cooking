@@ -72,8 +72,7 @@ function originalImage(html, base) {
 
 
 function productImage(html, base, productPattern) {
-  const og = originalImage(html, base);
-  if (og) return og;
+  // Eigentliche Produktdaten/Galerie vor allgemeinen Social-Meta-Bildern auswerten.
 
   // Product JSON-LD from the official manufacturer's page.
   for (const block of html.match(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi) ?? []) {
@@ -112,7 +111,7 @@ function productImage(html, base, productPattern) {
     }
   }
   if (!candidates.length) console.log('Kein passendes Produktbild in offiziellen Meta-, JSON-LD- oder Gallery-Daten gefunden.');
-  return candidates[0] ?? null;
+  return candidates[0] ?? originalImage(html, base);
 }
 
 function logoImage(html, base, brand) {
@@ -177,12 +176,14 @@ for (const item of sources) {
     const url = item.type === 'og' ? productImage(html, item.page, /crisp[i]|AS101EU/i) : logoImage(html, item.page, item.match);
     if (!url) throw new Error('Kein sicher zuordenbares Herstellerbild gefunden');
     const { bytes, ext } = await fetchBytes(url);
+    if (item.key === 'ninja-crispi' && bytes.length < 20_000) throw new Error('Nur ein winziges Icon statt eines Produktfotos gefunden');
     const name = item.key + '.' + ext;
     await writeFile(new URL(name, outDir), bytes);
     manifest[item.key] = { path:'brands/' + name, source: item.page };
     count += 1;
     console.log('Originalasset gespeichert:', item.key, bytes.length, 'Byte');
   } catch (error) {
+    delete manifest[item.key];
     console.log('Originalasset nicht verfügbar:', item.key, error.message);
   }
 }
