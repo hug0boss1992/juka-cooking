@@ -182,6 +182,9 @@ h1, h2 { font-family: var(--serif); }
 .feed-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(0.65rem, 2vw, 1.3rem); padding: 0; margin: 0; list-style: none; }
 .feed-grid a { display: flex; flex-direction: column; height: 100%; border: 1px solid #e9e2d8; border-radius: 1rem; overflow: hidden; background: var(--paper); box-shadow: 0 4px 15px #5d4c3810; text-decoration: none; }
 .feed-grid a:hover { outline: 2px solid var(--green); outline-offset: 2px; }
+.feed-item { animation: feed-in 0.5s ease-out var(--delay, 0ms) both; }
+@keyframes feed-in { from { opacity: 0; transform: translateY(14px); } }
+@media (prefers-reduced-motion: reduce) { .feed-item { animation: none; } }
 .feed-cover { position: relative; }
 .feed-cover .ad { position: absolute; inset: 0.5rem 0.5rem auto auto; }
 .feed-grid img { display: block; width: 100%; aspect-ratio: 4 / 5; background: #ede7da; object-fit: cover; }

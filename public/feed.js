@@ -79,6 +79,8 @@ function renderPosts(panelId, posts, label, offset = 0) {
     }
     link.append(cover, title);
     item.append(link);
+    item.className = 'feed-item';
+    item.style.setProperty('--delay', `${Math.min(index, 11) * 45}ms`);
     grid.append(item);
     firstLink ??= link;
   }
@@ -112,18 +114,35 @@ loadPosts('./feed.json').then((posts) => {
   const archive = posts.filter((post) => instagramPost.test(post?.permalink) && instagramImage.test(post.image));
   const more = document.querySelector('.feed-more');
   const pageSize = 12;
+  // Load the next pages automatically while scrolling, then switch to the button
+  // so the footer with imprint and privacy policy stays reachable.
+  const autoLoadUntil = 48;
   let offset = 0;
 
   function showNextPosts() {
     const batch = archive.slice(offset, offset + pageSize);
     const firstLink = renderPosts('instagram-panel', batch, 'Instagram-Beitrag', offset);
     offset += batch.length;
-    more.hidden = offset >= archive.length;
+    const remaining = archive.length - offset;
+    more.hidden = remaining <= 0;
+    more.textContent = `Weitere Beiträge (${remaining})`;
     return firstLink;
   }
 
   showNextPosts();
   more.addEventListener('click', () => showNextPosts()?.focus());
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting) || more.hidden) return;
+      if (offset >= autoLoadUntil) {
+        observer.disconnect();
+        return;
+      }
+      showNextPosts();
+    }, { rootMargin: '0px 0px 600px 0px' });
+    observer.observe(more);
+  }
 });
 
 loadPosts('./tiktok.json').then((posts) => {
