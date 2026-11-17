@@ -29,6 +29,10 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Originale Partnerbilder lokal abrufen
+        run: |
+          node scripts/sync-brand-assets.mjs
+          git add -A -- public/brands/
       - name: Links und Bio aus links.md prüfen und bauen
         run: node scripts/build-site.mjs
       - name: Instagram-Beiträge abrufen
@@ -44,14 +48,9 @@ jobs:
             git add -A -- public/
           fi
       - name: Änderungen und monatliches Lebenszeichen sichern
-        if: ${{ !cancelled() && steps.sync.outcome != 'skipped' && steps.sync.outcome != '' }}
         env:
           EVENT_NAME: ${{ github.event_name }}
-          SYNC_OUTCOME: ${{ steps.sync.outcome }}
         run: |
-          if [ "$SYNC_OUTCOME" != 'success' ]; then
-            git reset --quiet HEAD -- public/
-          fi
           if [ "$EVENT_NAME" = 'schedule' ]; then
             date -u +%Y-%m > .feed-keepalive
             git add -- .feed-keepalive
