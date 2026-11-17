@@ -1,0 +1,10 @@
+{
+  "naughty-pistazie": {
+    "path": "brands/naughty-pistazie.jpg",
+    "source": "https://naughtynuts.de/products/bio-pistazienmus"
+  },
+  "naughty-logo": {
+    "path": "brands/naughty-logo.png",
+    "source": "https://naughtynuts.de/"
+  }
+}
