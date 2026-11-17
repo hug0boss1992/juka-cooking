@@ -54,17 +54,26 @@ function getBrandImage(name) {
 
 function renderPartners(partners) {
   if (!partners.length) return '';
+
+  // Jeder Partnerlink gehört genau einem Bereich. Ein Ninja-Affiliate-Link
+  // enthält mitunter "amazonde" im Tracking-Host, ist aber kein Amazon-Artikel.
   const groups = [
-    { name: 'Ninja', logo: 'ninja-logo', match: (p) => /ninja/i.test(p.label) || /sharkninja|sjv\.io/i.test(p.href) },
-    { name: 'NaughtyNuts', logo: 'naughty-logo', match: (p) => /naughty/i.test(p.label) || /naughtynuts/i.test(p.href) },
-    { name: 'Amazon Favoriten', logo: null, match: (p) => /amazon|amzn\.to/i.test(p.label + ' ' + p.href) }
+    { name: 'Ninja', logo: 'ninja-logo', match: (p) => /ninja/i.test(p.label) || /(?:^|\.)sharkninja/i.test(new URL(p.href).hostname) || /sharkninjaamazonde\.sjv\.io/i.test(new URL(p.href).hostname) },
+    { name: 'NaughtyNuts', logo: 'naughty-logo', match: (p) => /naughtynuts|naughty\s*nuts/i.test(p.label) || /(?:^|\.)naughtynuts\.de$/i.test(new URL(p.href).hostname) },
+    { name: 'Amazon Favoriten', logo: null, match: (p) => /amazon/i.test(p.label) || /^(?:www\.)?amazon\.(?:de|com)$|(?:^|\.)amzn\.to$|(?:^|\.)a\.co$/i.test(new URL(p.href).hostname) }
   ];
-  const unmatched = [];
-  const grouped = groups.map((group) => ({...group, items: partners.filter(group.match)}));
-  for (const partner of partners) {
-    if (!groups.some((group) => group.match(partner))) unmatched.push(partner);
-  }
+  const assigned = new Set();
+  const grouped = groups.map((group) => {
+    const items = partners.filter((p) => {
+      if (assigned.has(p) || !group.match(p)) return false;
+      assigned.add(p);
+      return true;
+    });
+    return {...group, items};
+  });
+  const unmatched = partners.filter((p) => !assigned.has(p));
   if (unmatched.length) grouped.push({name:'Weitere Empfehlungen',logo:null,items:unmatched});
+
   const markup = grouped.filter((group) => group.items.length).map((group, index) => {
     const logo = group.logo ? getBrandImage(group.logo) : '';
     const heading = logo
@@ -72,11 +81,11 @@ function renderPartners(partners) {
       : '<strong class="brand-name">' + escape(group.name) + '</strong>';
     const rows = group.items.map((item) => {
       const key = /crispi/i.test(item.label) && group.name === 'Ninja'
-        ? 'ninja-crispi'
-        : group.name === 'NaughtyNuts' ? 'naughty-pistazie' : null;
+        ? 'ninja-crispi' : group.name === 'NaughtyNuts' ? 'naughty-pistazie' : null;
       const photo = key ? getBrandImage(key) : '';
       return '<a class="partner-product" href="' + item.href + '" rel="sponsored noopener" target="_blank">'
-        + (photo ? '<img class="product-photo" src="' + escape(photo) + '" alt="" loading="lazy">' : '<span class="product-no-photo" aria-hidden="true">✦</span>')
+        + (photo ? '<img class="product-photo" src="' + escape(photo) + '" alt="" loading="lazy">'
+          : '<span class="product-no-photo" aria-hidden="true"></span>')
         + '<span class="product-copy"><strong>' + item.label + '</strong>' + (item.note ? '<small>' + item.note + '</small>' : '') + '</span>'
         + '<span class="product-button">Zum Produkt <span aria-hidden="true">↗</span></span>'
         + '</a>';
