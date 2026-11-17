@@ -3,6 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 const root = new URL('../', import.meta.url);
 const headings = new Map([['## Bio', 'bio'], ['## Links', 'links'], ['## Partnerlinks', 'partners']]);
 const linkLine = /^-\s+(?:(.*?)\s+)?\[([^\]]+)\]\((\S+)\)(?:\s+[–-]\s+(.+))?$/u;
+const productImage = /^!\[\]\((products\/[a-z0-9][a-z0-9._-]*\.(?:webp|avif|jpe?g|png|svg))\)$/i;
 const entities = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 const escape = (value) => value.replace(/[&<>"']/g, (character) => entities[character]);
 const profileIcons = new Map([
@@ -17,6 +18,7 @@ function readContent(source) {
   const content = { bio: [], links: [], partners: [] };
   const sections = new Set();
   let section;
+  let partner;
   for (const [index, entry] of source.split(/\r?\n/).entries()) {
     const line = entry.trim();
     if (headings.has(line)) {
@@ -32,6 +34,30 @@ function readContent(source) {
       continue;
     }
 
+    if (section === 'partners' && line.startsWith('### ')) {
+      const label = line.slice(4).trim();
+      if (!label) throw new Error(`links.md, Zeile ${index + 1}: Der Partner braucht einen Namen.`);
+      partner = { label: escape(label), products: [] };
+      content.partners.push(partner);
+      continue;
+    }
+
+    if (section === 'partners' && partner && line.startsWith('- Logo: ')) {
+      const logo = productImage.exec(line.slice(8));
+      if (!logo || partner.logo) throw new Error(`links.md, Zeile ${index + 1}: Verwende einmal pro Partner - Logo: ![](products/logo.svg).`);
+      partner.logo = logo[1];
+      continue;
+    }
+
+    if (section === 'partners' && partner && line.startsWith('- Rabattcode: ')) {
+      const code = line.slice(14);
+      if (!/^[a-z0-9][a-z0-9-]*$/i.test(code) || partner.discountCode) {
+        throw new Error(`links.md, Zeile ${index + 1}: Verwende einmal pro Partner - Rabattcode: DEIN-CODE.`);
+      }
+      partner.discountCode = code;
+      continue;
+    }
+
     const link = linkLine.exec(line);
     if (!link || !link[2].trim()) throw new Error(`links.md, Zeile ${index + 1}: Verwende - [Name](https://adresse).`);
 
@@ -40,64 +66,66 @@ function readContent(source) {
     const webLink = url?.protocol === 'https:' && /^https:\/\//i.test(href) && !url.username && !url.password;
     const emailLink = section === 'links' && /^mailto:[^\s@]+@[^\s@]+$/i.test(href);
     if (!webLink && !emailLink) throw new Error(`links.md, Zeile ${index + 1}: Die Adresse muss mit https:// beginnen. Für E-Mail-Links ist mailto: möglich.`);
-    content[section].push({ icon: escape(icon || ''), label: escape(label.trim()), href: escape(url.href), note: escape(note || '') });
+    const item = { label: escape(label.trim()), href: escape(url.href), note: escape(note || '') };
+    if (section === 'links') {
+      content.links.push(item);
+    } else if (!partner) {
+      content.partners.push({ label: item.label, products: [], shop: item });
+    } else if (icon === 'Shop:') {
+      if (partner.shop) throw new Error(`links.md, Zeile ${index + 1}: Pro Partner ist ein Shoplink möglich.`);
+      partner.shop = item;
+    } else {
+      const offer = icon?.startsWith('Angebot: ') ?? false;
+      const image = icon && productImage.exec(offer ? icon.slice(9) : icon);
+      if (icon && !image) throw new Error(`links.md, Zeile ${index + 1}: Verwende ein lokales Produktbild wie ![](products/bild.webp).`);
+      partner.products.push({ ...item, image: image?.[1], offer });
+    }
   }
   if (sections.size !== headings.size) throw new Error('links.md braucht die Überschriften Bio, Links und Partnerlinks.');
   return content;
 }
 
-function getBrandImage(name) {
-  const entry = brandAssets[name];
-  if (!entry || !/^brands\/[a-z0-9-]+\.(png|jpg|webp|svg)$/.test(entry.path)) return '';
-  return entry.path;
-}
-
 function renderPartners(partners) {
   if (!partners.length) return '';
+  const hasAmazonLink = partners.some(({ shop, products }) =>
+    [shop, ...products].some((item) => item && /^https:\/\/(?:link\.amazon|amzn\.(?:eu|to)|(?:www\.)?amazon\.de)\//i.test(item.href)));
+  const items = partners.map(({ label, logo, discountCode, shop, products }) => `
+      <details class="partner">
+        <summary>
+          ${logo ? `<img class="partner-logo" src="${logo}" alt="${label}" decoding="async">` : `<strong>${label}</strong>`}
+          <span class="partner-labels">
+            ${discountCode ? `<span class="partner-discount">Rabattcode <strong>${discountCode}</strong></span>` : ''}
+            <span class="ad">Anzeige</span>
+          </span>
+          <span class="partner-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="partner-content">${products.length ? `
+          <ul class="partner-products">
+            ${products.map((product) => `<li>${renderProduct(product)}</li>`).join('\n            ')}
+          </ul>` : ''}${shop ? `
+          <p class="partner-shop">${shop.note ? `<span>${shop.note}</span>` : ''}
+            <a href="${shop.href}" rel="sponsored noopener">${shop.label}</a>
+          </p>` : ''}${!products.length && !shop ? `
+          <p class="partner-empty">Produktempfehlungen folgen.</p>` : ''}
+        </div>
+      </details>`);
+  return `<section id="empfehlungen" class="wrap partners" aria-labelledby="partners-title">
+      <h2 id="partners-title">Meine Empfehlungen</h2>
+      <div class="partner-list">${items.join('')}
+      </div>
+      ${hasAmazonLink ? '<p class="partner-disclosure">Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.</p>' : ''}
+    </section>`;
+}
 
-  // Jeder Partnerlink gehört genau einem Bereich. Ein Ninja-Affiliate-Link
-  // enthält mitunter "amazonde" im Tracking-Host, ist aber kein Amazon-Artikel.
-  const groups = [
-    { name: 'Ninja', logo: 'ninja-logo', match: (p) => /ninja/i.test(p.label) || /(?:^|\.)sharkninja/i.test(new URL(p.href).hostname) || /sharkninjaamazonde\.sjv\.io/i.test(new URL(p.href).hostname) },
-    { name: 'NaughtyNuts', logo: 'naughty-logo', match: (p) => /naughtynuts|naughty\s*nuts/i.test(p.label) || /(?:^|\.)naughtynuts\.de$/i.test(new URL(p.href).hostname) },
-    { name: 'Amazon Favoriten', logo: null, match: (p) => /amazon/i.test(p.label) || /^(?:www\.)?amazon\.(?:de|com)$|(?:^|\.)amzn\.to$|(?:^|\.)a\.co$/i.test(new URL(p.href).hostname) }
-  ];
-  const assigned = new Set();
-  const grouped = groups.map((group) => {
-    const items = partners.filter((p) => {
-      if (assigned.has(p) || !group.match(p)) return false;
-      assigned.add(p);
-      return true;
-    });
-    return {...group, items};
-  });
-  const unmatched = partners.filter((p) => !assigned.has(p));
-  if (unmatched.length) grouped.push({name:'Weitere Empfehlungen',logo:null,items:unmatched});
-
-  const markup = grouped.filter((group) => group.items.length).map((group, index) => {
-    const logo = group.logo ? getBrandImage(group.logo) : '';
-    const heading = logo
-      ? '<img class="brand-logo" src="' + escape(logo) + '" alt="' + escape(group.name) + '" loading="lazy">'
-      : '<strong class="brand-name">' + escape(group.name) + '</strong>';
-    const rows = group.items.map((item) => {
-      const key = /crispi/i.test(item.label) && group.name === 'Ninja'
-        ? 'ninja-crispi' : group.name === 'NaughtyNuts' ? 'naughty-pistazie' : null;
-      const photo = key ? getBrandImage(key) : '';
-      return '<a class="partner-product" href="' + item.href + '" rel="sponsored noopener" target="_blank">'
-        + (photo ? '<img class="product-photo" src="' + escape(photo) + '" alt="" loading="lazy">'
-          : '<span class="product-no-photo" aria-hidden="true"></span>')
-        + '<span class="product-copy"><strong>' + item.label + '</strong>' + (item.note ? '<small>' + item.note + '</small>' : '') + '</span>'
-        + '<span class="product-button">Zum Produkt <span aria-hidden="true">↗</span></span>'
-        + '</a>';
-    }).join('');
-    return '<details class="partner-accordion"' + (index === 0 ? ' open' : '') + '>'
-      + '<summary class="partner-summary"><span class="partner-brand">' + heading + '</span>'
-      + '<span class="partner-meta">Anzeige</span><span class="partner-chevron" aria-hidden="true">⌄</span></summary>'
-      + '<div class="partner-products">' + rows + '</div></details>';
-  }).join('');
-  return '<section id="empfehlungen" class="wrap partners" aria-labelledby="partners-title">'
-    + '<h2 id="partners-title">Meine Empfehlungen</h2>'
-    + '<div class="partner-accordion-list">' + markup + '</div></section>';
+function renderProduct({ label, href, note, image, offer }) {
+  return `<a class="partner-product${offer ? ' partner-offer' : ''}" href="${href}" rel="sponsored noopener">
+              ${image ? `<img src="${image}" alt="" loading="lazy" decoding="async">` : ''}
+              <span class="partner-product-copy">
+                <strong>${label}</strong>
+                ${note ? `<small>${note}</small>` : ''}
+                <span class="partner-product-link">${offer ? 'Angebote ansehen' : 'Produkt ansehen'} ↗</span>
+              </span>
+            </a>`;
 }
 
 function renderProfileLinks(links) {
@@ -118,13 +146,6 @@ function renderContactLinks(links) {
   const items = contactLinks.map(({ label, href }) => `<a href="${href}">${label}</a>`);
   return `<nav class="contact-links" aria-label="Kontakt und weitere Links">${items.join('')}</nav>`;
 }
-
-let brandAssets = {};
-try {
-  const source = await readFile(new URL('public/brands/manifest.json', root), 'utf8');
-  const parsed = JSON.parse(source);
-  if (parsed && typeof parsed === 'object') brandAssets = parsed;
-} catch { /* Vor dem ersten erfolgreichen Herstellerbild-Abruf bleiben die Originalnamen sichtbar. */ }
 
 const [config, template] = await Promise.all([
   readFile(new URL('links.md', root), 'utf8'),
