@@ -1,12 +1,18 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
+import { resolve, sep } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { getToken, listVideos, storeRefreshToken } from './tiktok-api.mjs';
+import { buildTikTokFeed } from './update-tiktok.mjs';
 
 const redirect = 'http://127.0.0.1:3455/callback/';
 const env = process.env;
 const repository = process.argv[2];
-if (!env.TIKTOK_CLIENT_KEY || !env.TIKTOK_CLIENT_SECRET || !env.TIKTOK_SECRET_WRITER || !/^[\w.-]+\/[\w.-]+$/.test(repository)) {
-  console.error('App-Zugang, GitHub-Secret-Zugang und Owner/Repository gemäß README angeben.');
+const sandbox = repository === '--sandbox';
+const previewPath = process.argv[3];
+if (!env.TIKTOK_CLIENT_KEY || !env.TIKTOK_CLIENT_SECRET ||
+    (sandbox ? !previewPath : !env.TIKTOK_SECRET_WRITER || !/^[\w.-]+\/[\w.-]+$/.test(repository))) {
+  console.error('TikTok-App-Zugang und Owner/Repository mit GitHub-Secret-Zugang oder --sandbox VORSCHAUORDNER angeben.');
   process.exit(1);
 }
 
@@ -50,9 +56,16 @@ try {
     redirect_uri: redirect,
     code_verifier: verifier,
   }, env);
-  if (!(await listVideos(token.access_token, 1)).length) throw new Error('Die Kontoautorisierung lieferte keine öffentlichen Videos.');
-  storeRefreshToken(token.refresh_token, repository, env.TIKTOK_SECRET_WRITER);
-  console.log('TikTok verbunden. Das Refresh-Token liegt im GitHub-Actions-Secret.');
+  const videos = await listVideos(token.access_token, sandbox ? 3 : 1);
+  if (!videos.length) throw new Error('Die Kontoautorisierung lieferte keine öffentlichen Videos.');
+  if (sandbox) {
+    const directory = pathToFileURL(resolve(previewPath) + sep);
+    const { shown, failed } = await buildTikTokFeed(videos, { directory });
+    console.log(`Sandbox-Vorschau erstellt. ${shown} Videokarten, ${failed} nicht verfügbare Titelbilder.`);
+  } else {
+    storeRefreshToken(token.refresh_token, repository, env.TIKTOK_SECRET_WRITER);
+    console.log('TikTok verbunden. Das Refresh-Token liegt im GitHub-Actions-Secret.');
+  }
 } catch (error) {
   console.error(error.message);
   process.exitCode = 1;

@@ -2,6 +2,25 @@ import { spawnSync } from 'node:child_process';
 
 const endpoint = 'https://open.tiktokapis.com/v2/';
 const videoUrl = /^https:\/\/www\.tiktok\.com\/@juka\.cooking\/video\/(\d+)\/?$/i;
+const oauthErrors = new Set([
+  'access_denied', 'invalid_client', 'invalid_grant', 'invalid_request', 'invalid_scope',
+  'unauthorized_client', 'unsupported_grant_type', 'unsupported_response_type',
+  'server_error', 'temporarily_unavailable',
+]);
+
+// Zeigt nur Merkmale der Eingaben, nie den Inhalt selbst.
+export function describeCredentials({ TIKTOK_CLIENT_KEY: key, TIKTOK_CLIENT_SECRET: secret }) {
+  function traits(value) {
+    const unusual = [...value].filter((character) => !/[A-Za-z0-9]/.test(character)).length;
+    return `${value.length} Zeichen, ${unusual ? `${unusual} Zeichen außer Buchstaben und Ziffern` : 'nur Buchstaben und Ziffern'}`;
+  }
+  const lines = [
+    `Client key: ${traits(key)}, ${key.startsWith('sb') ? 'beginnt mit "sb" (Sandbox)' : 'beginnt NICHT mit "sb" (eher kein Sandbox-Key)'}`,
+    `Client secret: ${traits(secret)}${secret.length === 32 ? '' : ' (erwartet sind üblicherweise 32)'}`,
+  ];
+  if (key === secret) lines.push('Warnung: Key und Secret sind identisch, vermutlich wurde zweimal derselbe Wert eingefügt.');
+  return lines;
+}
 
 export async function getToken(grant, env, fetchResource = fetch) {
   if (!env.TIKTOK_CLIENT_KEY || !env.TIKTOK_CLIENT_SECRET) throw new Error('TikTok-App-Zugang fehlt.');
@@ -16,9 +35,11 @@ export async function getToken(grant, env, fetchResource = fetch) {
     redirect: 'error',
     signal: AbortSignal.timeout(20_000),
   });
-  const data = await response.json();
-  if (!response.ok || !data.access_token || !data.refresh_token) {
-    throw new Error(`TikTok-Autorisierung fehlgeschlagen (HTTP ${response.status}).`);
+  const data = await response.json().catch(() => null);
+  if (!response.ok || !data?.access_token || !data?.refresh_token) {
+    const code = oauthErrors.has(data?.error) ? data.error : 'unbekannter_fehler';
+    const logId = typeof data?.log_id === 'string' && /^[\w-]{1,64}$/.test(data.log_id) ? `, log_id ${data.log_id}` : '';
+    throw new Error(`TikTok-Autorisierung fehlgeschlagen (${code}, HTTP ${response.status}${logId}).`);
   }
   return data;
 }
