@@ -70,6 +70,51 @@ function originalImage(html, base) {
   return null;
 }
 
+
+function productImage(html, base, productPattern) {
+  const og = originalImage(html, base);
+  if (og) return og;
+
+  // Product JSON-LD from the official manufacturer's page.
+  for (const block of html.match(/<script\b[^>]*type=["']application\/ld\+json["'][^>]*>[\s\S]*?<\/script>/gi) ?? []) {
+    const payload = block.replace(/^<script[^>]*>/i, '').replace(/<\/script>$/i, '');
+    try {
+      const data = JSON.parse(payload);
+      const stack = Array.isArray(data) ? data : [data];
+      while (stack.length) {
+        const entry = stack.pop();
+        if (!entry || typeof entry !== 'object') continue;
+        if (Array.isArray(entry['@graph'])) stack.push(...entry['@graph']);
+        const type = [].concat(entry['@type'] ?? []).join(' ');
+        if (!/product/i.test(type)) continue;
+        if (!productPattern.test(JSON.stringify({name:entry.name, sku:entry.sku, description:entry.description}).slice(0,800))) continue;
+        const urls = [].concat(entry.image ?? []).map((i) => typeof i === 'string' ? i : i?.url);
+        for (const source of urls) {
+          const url = candidateUrl(source,base);
+          if (url) return url;
+        }
+      }
+    } catch {}
+  }
+
+  // Some stores render product galleries without OpenGraph metadata.
+  const candidates = [];
+  for (const tag of html.match(/<img\b[^>]+>/gi) ?? []) {
+    const a = attrs(tag);
+    const label = [a.alt, a.title, a['data-alt'], a.src, a['data-src'], a.srcset].join(' ');
+    if (!productPattern.test(label)) continue;
+    for (const src of [a['data-large-image'],a['data-zoom-image'], a['data-src'], a.src, (a.srcset || '').split(',')[0].trim().split(' ')[0]]) {
+      const url = candidateUrl(src,base);
+      if (url) {
+        candidates.push(url);
+        break;
+      }
+    }
+  }
+  if (!candidates.length) console.log('Kein passendes Produktbild in offiziellen Meta-, JSON-LD- oder Gallery-Daten gefunden.');
+  return candidates[0] ?? null;
+}
+
 function logoImage(html, base, brand) {
   const candidates = [];
   for (const tag of html.match(/<(?:img|source)\b[^>]+>/gi) ?? []) {
@@ -114,7 +159,8 @@ async function fetchBytes(url) {
   else if (bytes.subarray(0,4).toString()==='RIFF' && bytes.subarray(8,12).toString()==='WEBP') ext='webp';
   else if (type.includes('image/svg+xml') && bytes.toString('utf8').includes('<svg')) {
     const svg = bytes.toString('utf8');
-    if (/<script\b|<foreignObject\b|onload\s*=|onerror\s*=|https?:\/\/|data:/i.test(svg)) throw new Error('SVG mit externen/aktiven Inhalten');
+    const sanitized = svg.replace(/\sxmlns(?::xlink)?=["']https?:\/\/[^"']+["']/gi, '');
+    if (/<script\b|<foreignObject\b|\son[a-z]+\s*=|(?:href|xlink:href)\s*=\s*["'](?:https?:|data:)|url\(\s*["']?https?:|@import\b/i.test(sanitized)) throw new Error('SVG mit externen/aktiven Inhalten');
     ext='svg';
   } else throw new Error('Kein unterstuetztes Originalbild');
   return { bytes, ext };
@@ -128,7 +174,7 @@ for (const item of sources) {
     const pageRes = await fetch(item.page, { signal: AbortSignal.timeout(20000), headers: { 'User-Agent': 'Mozilla/5.0 (compatible; JukaCookingCreatorSite/1.0)' } });
     if (!pageRes.ok) throw new Error('Herstellerseite HTTP ' + pageRes.status);
     const html = await pageRes.text();
-    const url = item.type === 'og' ? originalImage(html, item.page) : logoImage(html, item.page, item.match);
+    const url = item.type === 'og' ? productImage(html, item.page, /crisp[i]|AS101EU/i) : logoImage(html, item.page, item.match);
     if (!url) throw new Error('Kein sicher zuordenbares Herstellerbild gefunden');
     const { bytes, ext } = await fetchBytes(url);
     const name = item.key + '.' + ext;
