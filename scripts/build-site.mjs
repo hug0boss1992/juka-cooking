@@ -46,19 +46,49 @@ function readContent(source) {
   return content;
 }
 
+function getBrandImage(name) {
+  const entry = brandAssets[name];
+  if (!entry || !/^brands\/[a-z0-9-]+\.(png|jpg|webp|svg)$/.test(entry.path)) return '';
+  return entry.path;
+}
+
 function renderPartners(partners) {
   if (!partners.length) return '';
-  const items = partners.map(({ icon, label, href, note }) => `
-      <a class="partner" href="${href}" rel="sponsored noopener">
-        <span class="partner-icon" aria-hidden="true">${icon || '↗'}</span>
-        <span><strong>${label}</strong>${note ? `<small>${note}</small>` : ''}</span>
-        <span class="ad">Anzeige</span>
-      </a>`);
-  return `<section id="empfehlungen" class="wrap partners" aria-labelledby="partners-title">
-      <h2 id="partners-title">Meine Empfehlungen</h2>
-      <div class="partner-grid">${items.join('')}
-      </div>
-    </section>`;
+  const groups = [
+    { name: 'Ninja', logo: 'ninja-logo', match: (p) => /ninja/i.test(p.label) || /sharkninja|sjv\.io/i.test(p.href) },
+    { name: 'NaughtyNuts', logo: 'naughty-logo', match: (p) => /naughty/i.test(p.label) || /naughtynuts/i.test(p.href) },
+    { name: 'Amazon Favoriten', logo: null, match: (p) => /amazon|amzn\.to/i.test(p.label + ' ' + p.href) }
+  ];
+  const unmatched = [];
+  const grouped = groups.map((group) => ({...group, items: partners.filter(group.match)}));
+  for (const partner of partners) {
+    if (!groups.some((group) => group.match(partner))) unmatched.push(partner);
+  }
+  if (unmatched.length) grouped.push({name:'Weitere Empfehlungen',logo:null,items:unmatched});
+  const markup = grouped.filter((group) => group.items.length).map((group, index) => {
+    const logo = group.logo ? getBrandImage(group.logo) : '';
+    const heading = logo
+      ? '<img class="brand-logo" src="' + escape(logo) + '" alt="' + escape(group.name) + '" loading="lazy">'
+      : '<strong class="brand-name">' + escape(group.name) + '</strong>';
+    const rows = group.items.map((item) => {
+      const key = /crispi/i.test(item.label) && group.name === 'Ninja'
+        ? 'ninja-crispi'
+        : group.name === 'NaughtyNuts' ? 'naughty-pistazie' : null;
+      const photo = key ? getBrandImage(key) : '';
+      return '<a class="partner-product" href="' + item.href + '" rel="sponsored noopener" target="_blank">'
+        + (photo ? '<img class="product-photo" src="' + escape(photo) + '" alt="" loading="lazy">' : '<span class="product-no-photo" aria-hidden="true">✦</span>')
+        + '<span class="product-copy"><strong>' + item.label + '</strong>' + (item.note ? '<small>' + item.note + '</small>' : '') + '</span>'
+        + '<span class="product-button">Zum Produkt <span aria-hidden="true">↗</span></span>'
+        + '</a>';
+    }).join('');
+    return '<details class="partner-accordion"' + (index === 0 ? ' open' : '') + '>'
+      + '<summary class="partner-summary"><span class="partner-brand">' + heading + '</span>'
+      + '<span class="partner-meta">Anzeige</span><span class="partner-chevron" aria-hidden="true">⌄</span></summary>'
+      + '<div class="partner-products">' + rows + '</div></details>';
+  }).join('');
+  return '<section id="empfehlungen" class="wrap partners" aria-labelledby="partners-title">'
+    + '<h2 id="partners-title">Meine Empfehlungen</h2>'
+    + '<div class="partner-accordion-list">' + markup + '</div></section>';
 }
 
 function renderProfileLinks(links) {
@@ -79,6 +109,13 @@ function renderContactLinks(links) {
   const items = contactLinks.map(({ label, href }) => `<a href="${href}">${label}</a>`);
   return `<nav class="contact-links" aria-label="Kontakt und weitere Links">${items.join('')}</nav>`;
 }
+
+let brandAssets = {};
+try {
+  const source = await readFile(new URL('public/brands/manifest.json', root), 'utf8');
+  const parsed = JSON.parse(source);
+  if (parsed && typeof parsed === 'object') brandAssets = parsed;
+} catch { /* Vor dem ersten erfolgreichen Herstellerbild-Abruf bleiben die Originalnamen sichtbar. */ }
 
 const [config, template] = await Promise.all([
   readFile(new URL('links.md', root), 'utf8'),
