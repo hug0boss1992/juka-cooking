@@ -24,6 +24,7 @@ UGC & Kooperationen mit Marken, die ich wirklich nutze.
 - Logo: ![](products/sharkninja-logo.svg)
 - Angebot: ![](products/sharkninja-black-friday.webp) [SharkNinja Black Friday Angebote](https://link.amazon/B068BOc4e) – Aktion im SharkNinja-Shop auf Amazon.
 - ![](products/crispi-pro-moosgruen.jpg) [Ninja CRISPi PRO XL · Moosgrün](https://sharkninjaamazonde.sjv.io/L0kEnV) – Glas-Heißluftfritteuse mit fünf Programmen und zwei Glasbehältern (5,7 l und 2,3 l).
+- ![](products/creami-scoop-swirl-platinsilber.jpg) [Ninja CREAMi Scoop & Swirl · Platinsilber](https://sharkninjaamazonde.sjv.io/DWxM3G) – Eismaschine mit 13 Programmen und zwei Behältern, auch für Softeis, Gelato und Milchshakes.
 
 ### Naughty Nuts
 
