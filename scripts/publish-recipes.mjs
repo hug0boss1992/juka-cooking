@@ -121,13 +121,26 @@ function recipePage(r) {
   const products = r.partners.map((p) => `<a class="product" href="${esc(p.href)}" rel="sponsored noopener"><img src="../${esc(p.image)}" alt="" width="96" height="96"><span><span class="ad">Anzeige</span><strong>${esc(p.name)}</strong><small>${esc(p.note)}</small><em>Produkt ansehen ↗</em></span></a>${p.amazon ? '<p class="partner-disclosure">Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.</p>' : ''}`).join('');
   const schema = {
     '@context': 'https://schema.org', '@type': 'Recipe', name: r.title, description: r.intro || undefined,
-    image: `https://juka-cooking.de/${r.image}`, author: { '@type': 'Person', name: 'Justyna' },
+    image: [`https://juka-cooking.de/pins/${r.slug}.jpg`, `https://juka-cooking.de/${r.image}`], author: { '@type': 'Person', name: 'Justyna' },
     datePublished: r.publishedAt?.slice(0, 10), recipeYield: r.servings || undefined, totalTime: r.minutes ? `PT${r.minutes}M` : undefined,
     recipeIngredient: r.ingredients.filter((x) => !/:$/.test(x)),
     recipeInstructions: r.steps.map((text) => ({ '@type': 'HowToStep', text })),
     video: { '@type': 'VideoObject', name: r.title, description: r.intro || r.title, contentUrl: r.permalink, thumbnailUrl: `https://juka-cooking.de/${r.image}`, uploadDate: r.publishedAt },
   };
-  return `${head(`${r.title} · Rezept von Juka Cooking`, r.intro || r.title)}
+  const url = `https://juka-cooking.de/rezepte/${r.slug}.html`;
+  const pin = `https://juka-cooking.de/pins/${r.slug}.jpg`;
+  // Open-Graph-Angaben: Vorschaubild für Pinterest (2:3), WhatsApp und Facebook.
+  const og = `
+  <link rel="canonical" href="${url}">
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Juka Cooking">
+  <meta property="og:title" content="${esc(r.title)}">
+  <meta property="og:description" content="${esc(r.intro || r.title)}">
+  <meta property="og:url" content="${url}">
+  <meta property="og:image" content="${pin}">
+  <meta property="og:image:width" content="1000">
+  <meta property="og:image:height" content="1500">`;
+  return `${head(`${r.title} · Rezept von Juka Cooking`, r.intro || r.title, og)}
   <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>
 </head>
 <body>
