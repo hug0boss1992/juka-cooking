@@ -114,9 +114,8 @@ loadPosts('./feed.json').then((posts) => {
   const archive = posts.filter((post) => instagramPost.test(post?.permalink) && instagramImage.test(post.image));
   const more = document.querySelector('.feed-more');
   const pageSize = 12;
-  // Load the next pages automatically while scrolling, then switch to the button
-  // so the footer with imprint and privacy policy stays reachable.
-  const autoLoadUntil = 48;
+  // Load the next pages automatically while scrolling until the whole archive is shown.
+  // The button stays as a fallback for browsers without IntersectionObserver.
   let offset = 0;
 
   function showNextPosts() {
@@ -134,12 +133,15 @@ loadPosts('./feed.json').then((posts) => {
 
   if ('IntersectionObserver' in window) {
     const observer = new IntersectionObserver((entries) => {
-      if (!entries.some((entry) => entry.isIntersecting) || more.hidden) return;
-      if (offset >= autoLoadUntil) {
+      if (!entries.some((entry) => entry.isIntersecting)) return;
+      if (more.hidden) {
         observer.disconnect();
         return;
       }
       showNextPosts();
+      // Re-check after the layout changes, in case the button is still within reach.
+      observer.unobserve(more);
+      requestAnimationFrame(() => { if (!more.hidden) observer.observe(more); });
     }, { rootMargin: '0px 0px 600px 0px' });
     observer.observe(more);
   }

@@ -36,6 +36,17 @@ Falls Git nach einer Commit-Identität fragt, den Namen und eine mit GitHub verk
    Werbung unter **Partnerlinks** ergänzen. Die Seite setzt „Anzeige“ automatisch. Zum Umordnen Zeilen verschieben, zum Entfernen die ganze Zeile löschen. Die Bio steht im Abschnitt **Bio**.
 3. **Commit changes** wählen und auf dem Standardbranch speichern. Die Änderung geht mit dem nächsten erfolgreichen Pages-Lauf online. Bei einer ungültigen Zeile nennt der Workflow die Zeilennummer. Die letzte erfolgreiche Version bleibt online. [Dateien im GitHub-Browsereditor bearbeiten](https://docs.github.com/en/repositories/working-with-files/managing-files/editing-files)
 
+## Rezepte aktualisieren
+
+Die Rezeptseiten unter `public/rezepte/` werden lokal erzeugt, weil die vollständigen Beschreibungen und die Instagram-Statistiken nur im Ordner `intern/` liegen (nicht im Repository):
+
+```
+node scripts/publish-recipes.mjs
+node scripts/build-site.mjs
+```
+
+Sortiert wird nach Aufrufen aus dem Instagram-Export (`intern/rezepte-beliebtheit.json`). Doppelt gepostete Rezepte sind in `intern/rezepte-quelle.json` mit `doppeltVon` markiert. Rezepte mit offener Frage stehen in `hidden` in `scripts/publish-recipes.mjs` und werden erst nach Klärung gezeigt. Die Startseite zeigt die sechs beliebtesten Rezepte aus `public/rezepte/rezepte.json`.
+
 ## Betrieb
 
 - Beim täglichen Lauf um 05:23 UTC und beim manuellen Start ruft GitHub den Behold-Feed je einmal ab. Der Gratisfeed liefert bis zu sechs Beiträge pro Abruf. Der Workflow fügt sie ohne Duplikate zum Archiv `public/feed.json` hinzu und behält bereits erfasste Beiträge. Der Reiter zeigt die neuesten Beiträge zuerst und lädt über „Mehr Beiträge“ jeweils zwölf weitere Vorschaubilder aus `public/feed/`. Beiträge vor dem ersten Abruf brauchen einen eigenen Import. Wenn mehr als sechs neue Beiträge zwischen zwei erfassten Feed-Ständen erscheinen, können ältere davon im Archiv fehlen. [Behold-Tarifgrenzen](https://behold.so/pricing/)

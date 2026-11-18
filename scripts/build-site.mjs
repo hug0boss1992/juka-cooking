@@ -87,8 +87,8 @@ function readContent(source) {
 
 function renderPartners(partners) {
   if (!partners.length) return '';
-  const hasAmazonLink = partners.some(({ shop, products }) =>
-    [shop, ...products].some((item) => item && /^https:\/\/(?:link\.amazon|amzn\.(?:eu|to)|(?:www\.)?amazon\.de)\//i.test(item.href)));
+  // Der Amazon-Hinweis steht direkt im jeweiligen Partnerbereich unter den Amazon-Links.
+  const amazonLink = (item) => item && /^https:\/\/(?:link\.amazon|amzn\.(?:eu|to)|(?:www\.)?amazon\.de)\//i.test(item.href);
   const items = partners.map(({ label, logo, discountCode, shop, products }) => `
       <details class="partner">
         <summary>
@@ -106,14 +106,14 @@ function renderPartners(partners) {
           <p class="partner-shop">${shop.note ? `<span>${shop.note}</span>` : ''}
             <a href="${shop.href}" rel="sponsored noopener">${shop.label}</a>
           </p>` : ''}${!products.length && !shop ? `
-          <p class="partner-empty">Produktempfehlungen folgen.</p>` : ''}
+          <p class="partner-empty">Produktempfehlungen folgen.</p>` : ''}${[shop, ...products].some(amazonLink) ? `
+          <p class="partner-disclosure">Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.</p>` : ''}
         </div>
       </details>`);
   return `<section id="empfehlungen" class="wrap partners" aria-labelledby="partners-title">
       <h2 id="partners-title">Meine Empfehlungen</h2>
       <div class="partner-list">${items.join('')}
       </div>
-      ${hasAmazonLink ? '<p class="partner-disclosure">Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.</p>' : ''}
     </section>`;
 }
 
@@ -147,13 +147,50 @@ function renderContactLinks(links) {
   return `<nav class="contact-links" aria-label="Kontakt und weitere Links">${items.join('')}</nav>`;
 }
 
-const [config, template] = await Promise.all([
+// Bereich „Beliebteste Rezepte“ aus public/rezepte/rezepte.json (erzeugt von scripts/publish-recipes.mjs).
+function renderRecipes(recipes) {
+  if (!recipes.length) return '';
+  const cards = recipes.slice(0, 6).map((recipe) => `
+          <li><a href="rezepte/${escape(recipe.slug)}.html">
+            <img src="${escape(recipe.image)}" alt="" loading="lazy" decoding="async" width="640" height="800">
+            <span class="top-recipe-rank">${recipe.rank}</span>
+            <span class="top-recipe-title">${escape(recipe.title)}</span>
+          </a></li>`).join('');
+  return `<section id="rezepte" class="top-recipes" aria-labelledby="top-recipes-title">
+      <div class="wrap">
+        <div class="top-recipes-heading">
+          <div>
+            <p class="top-recipes-kicker">Am häufigsten nachgekocht</p>
+            <h2 id="top-recipes-title">Beliebteste Rezepte</h2>
+          </div>
+          <a class="top-recipes-all" href="rezepte/">Alle ${recipes.length} Rezepte ansehen →</a>
+        </div>
+        <ol class="top-recipes-grid">${cards}
+        </ol>
+      </div>
+    </section>`;
+}
+
+async function readRecipes() {
+  try {
+    return JSON.parse(await readFile(new URL('public/rezepte/rezepte.json', root), 'utf8')).recipes || [];
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+
+const [config, template, recipes] = await Promise.all([
   readFile(new URL('links.md', root), 'utf8'),
   readFile(new URL('./index.template.html', import.meta.url), 'utf8'),
+  readRecipes(),
 ]);
 try {
   const { bio, links, partners } = readContent(config);
   const page = template.replace('<!-- BIO -->', () => bio.join('<br>'))
+    .replace('<!-- RECIPE_NAV -->', () => recipes.length ? '<a href="rezepte/">Rezepte</a>' : '')
+    .replace('<!-- RECIPE_BUTTON -->', () => recipes.length ? `<a class="hero-recipes" href="rezepte/">Alle ${recipes.length} Rezepte</a>` : '')
+    .replace('<!-- RECIPES -->', () => renderRecipes(recipes))
     .replace('<!-- CONTACT_LINKS -->', () => renderContactLinks(links))
     .replace('<!-- PARTNER_NAV -->', () => partners.length ? '<a href="#empfehlungen">Empfehlungen</a>' : '')
     .replace('<!-- PROFILE_NAV -->', () => renderProfileLinks(links))

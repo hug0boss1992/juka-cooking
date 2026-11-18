@@ -25,14 +25,28 @@ function stripLabels(text) {
   return rest;
 }
 
+const cleanLine = (line) => stripLabels(line.replace(/(^|\s)[@#]\S+/gu, ''))
+  .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N})!?]+$/gu, '')
+  .replace(/\s+/g, ' ');
+
+// Ein Titel, der in der Beschreibung über einen Zeilenumbruch läuft
+// („Cremige⏎Hähnchen-Pfanne“, „Cheesecake (NO⏎BAKE!)“), wird wieder zusammengesetzt.
+const unfinished = (text) => Array.from(text).length < 12
+  || (text.match(/\(/g) || []).length > (text.match(/\)/g) || []).length;
+
 export function feedTitle(value) {
   if (typeof value !== 'string') return '';
 
-  for (const line of value.split(/\r?\n/)) {
-    const text = stripLabels(line.replace(/(^|\s)[@#]\S+/gu, ''))
-      .replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N})!?]+$/gu, '')
-      .replace(/\s+/g, ' ');
+  const lines = value.split(/\r?\n/);
+  for (let i = 0; i < lines.length; i++) {
+    let text = cleanLine(lines[i]);
     if (!text) continue;
+    for (let j = i + 1, joined = 0; joined < 2 && unfinished(text) && j < lines.length; j++) {
+      const next = cleanLine(lines[j]);
+      if (!next) break;
+      text = `${text} ${next}`;
+      joined++;
+    }
     const characters = Array.from(text);
     if (characters.length <= 88) return text;
 

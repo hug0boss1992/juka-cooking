@@ -34,7 +34,8 @@ function postLink(value, index) {
 }
 
 async function downloadPost({ post, date, permalink }, index, fetchResource) {
-  const source = post.sizes?.small?.mediaUrl || post.sizes?.medium?.mediaUrl;
+  // Größtes verfügbares Titelbild bevorzugen, damit Vorschaubilder und Rezeptseiten scharf bleiben.
+  const source = post.sizes?.large?.mediaUrl || post.sizes?.medium?.mediaUrl || post.sizes?.small?.mediaUrl;
   if (typeof source !== 'string' || !beholdImage.test(source)) {
     throw new Error(`Kein Behold-Titelbild für Beitrag ${index + 1}.`);
   }

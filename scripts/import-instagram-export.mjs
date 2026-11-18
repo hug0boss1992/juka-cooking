@@ -7,6 +7,10 @@
 // Die CSV-Dateien stammen aus Meta Business Suite → Insights → Inhalte → Exportieren
 // und liefern die Permalinks, die der Datenexport nicht enthält. Beiträge ohne
 // Permalink werden übersprungen und gemeldet. ffmpeg muss im PATH liegen.
+//
+// Achtung: Der Export enthält nicht das gewählte Titelbild. Dieses Skript schneidet ein
+// Standbild aus dem Video aus. Danach die echten Titelbilder von Instagram übernehmen
+// (am 19.11.2026 für alle 161 Beiträge erledigt, 640×1136 statt 225×400).
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { readFile, rename, writeFile, mkdir } from 'node:fs/promises';

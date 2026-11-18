@@ -1,0 +1,658 @@
+{
+  "recipes": [
+    {
+      "slug": "cremige-kaese-sahne-pasta-mit-brokkoli",
+      "title": "Cremige Käse-Sahne-Pasta mit Brokkoli",
+      "image": "feed/dc13a1d79d4ee7214cd56c04.webp",
+      "rank": 1,
+      "minutes": 15,
+      "links": [
+        "https://www.instagram.com/reel/DaLO-0UIzGb/",
+        "https://www.instagram.com/reel/DcwFEeVo4eP/"
+      ]
+    },
+    {
+      "slug": "herzhafte-wuerstchen-pfannkuchen",
+      "title": "Herzhafte Würstchen-Pfannkuchen",
+      "image": "rezepte-bilder/Db3h3G-odct.webp",
+      "rank": 2,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Db3h3G-odct/",
+        "https://www.instagram.com/reel/DanmfSIo6Nj/"
+      ]
+    },
+    {
+      "slug": "cremiger-haehnchen-nudel-auflauf",
+      "title": "Cremiger Hähnchen-Nudel-Auflauf",
+      "image": "feed/9fe5cf58276f0cf37f7d87d1.webp",
+      "rank": 3,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Db5-7KYIxrl/",
+        "https://www.instagram.com/reel/DeG63tCIAE8/",
+        "https://www.instagram.com/reel/DalAwvcoQTI/"
+      ]
+    },
+    {
+      "slug": "cremige-one-pot-tagliatelle-mit-champignons",
+      "title": "Cremige One-Pot Tagliatelle mit Champignons",
+      "image": "rezepte-bilder/Da-1HhrI1oC.webp",
+      "rank": 4,
+      "minutes": 15,
+      "links": [
+        "https://www.instagram.com/reel/Da-1HhrI1oC/"
+      ]
+    },
+    {
+      "slug": "kartoffel-hackfleisch-auflauf",
+      "title": "Kartoffel-Hackfleisch-Auflauf",
+      "image": "feed/889873e2ac745cb2cc8c81f8.webp",
+      "rank": 5,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Db_HGHsIyYE/"
+      ]
+    },
+    {
+      "slug": "hackbaellchen-in-cremiger-sauce-mit-kartoffelpueree",
+      "title": "Hackbällchen in cremiger Sauce mit Kartoffelpüree",
+      "image": "feed/7ac74b7f54aa69277c4ddfc0.webp",
+      "rank": 6,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcJfR5XIzUy/",
+        "https://www.instagram.com/reel/DeWKILHoses/"
+      ]
+    },
+    {
+      "slug": "der-cremigste-kartoffelauflauf-ueberhaupt",
+      "title": "Der cremigste Kartoffelauflauf überhaupt",
+      "image": "feed/399f237a155a4f38970ea4c9.webp",
+      "rank": 7,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DavS2sSI4GE/",
+        "https://www.instagram.com/reel/DeRLdIbIBh0/"
+      ]
+    },
+    {
+      "slug": "tortilla-roellchen-mit-philadelphia-wiener-wuerstchen",
+      "title": "Tortilla-Röllchen mit Philadelphia & Wiener Würstchen",
+      "image": "feed/1a813ca99c67162d5d74aef1.webp",
+      "rank": 8,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DVVb34iiL3z/",
+        "https://www.instagram.com/reel/DeY6lK7IeEF/"
+      ]
+    },
+    {
+      "slug": "cremige-haehnchen-penne",
+      "title": "Cremige Hähnchen-Penne",
+      "image": "feed/cdd45883a713391de4c3b74f.webp",
+      "rank": 9,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DfSYc3QII02/",
+        "https://www.instagram.com/reel/DbqinKyod7x/",
+        "https://www.instagram.com/reel/DU2w4H5iHUv/"
+      ]
+    },
+    {
+      "slug": "ultra-cremiger-kartoffel-brokkoli-auflauf",
+      "title": "Ultra cremiger Kartoffel-Brokkoli-Auflauf",
+      "image": "feed/1f5b65623c96316ad3d11486.webp",
+      "rank": 10,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbbFH3foRF1/"
+      ]
+    },
+    {
+      "slug": "cremiger-kartoffel-brokkoli-haehnchen-auflauf",
+      "title": "Cremiger Kartoffel-Brokkoli-Hähnchen-Auflauf",
+      "image": "feed/5782b254cc2871f0ce25147d.webp",
+      "rank": 11,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DepKPn3IG1t/"
+      ]
+    },
+    {
+      "slug": "apfelwaffeln",
+      "title": "Apfelwaffeln",
+      "image": "feed/d98b3b3a7016f009e5dc2fe8.webp",
+      "rank": 12,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DdJv_W9IaiN/"
+      ]
+    },
+    {
+      "slug": "15-minuten-pasta-mit-hackfleisch-paprika",
+      "title": "15-Minuten Pasta mit Hackfleisch & Paprika",
+      "image": "feed/b37db36ab58e760d9e09c126.webp",
+      "rank": 13,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DaH5fhyIsRl/"
+      ]
+    },
+    {
+      "slug": "kartoffel-gyros-auflauf-mit-kaesekruste",
+      "title": "Kartoffel-Gyros-Auflauf mit Käsekruste",
+      "image": "feed/f33998d729ae6e379160c27d.webp",
+      "rank": 14,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Dc_g5gTI6UO/",
+        "https://www.instagram.com/reel/DZ-S5clqLne/"
+      ]
+    },
+    {
+      "slug": "one-pot-rigatoni-mit-frischkaese-cheddar",
+      "title": "One-Pot-Rigatoni mit Frischkäse & Cheddar",
+      "image": "feed/0fa1b90dba9ec62cfbeca59d.webp",
+      "rank": 15,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DaTBEdWoCm9/"
+      ]
+    },
+    {
+      "slug": "cremige-gemuese-pasta-mit-haehnchen",
+      "title": "Cremige Gemüse-Pasta mit Hähnchen",
+      "image": "feed/365246540f71eba01f5b842f.webp",
+      "rank": 16,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbBS9QuIFD3/"
+      ]
+    },
+    {
+      "slug": "one-pot-brokkoli-pasta",
+      "title": "One-Pot Brokkoli-Pasta",
+      "image": "rezepte-bilder/Dcyqs24xhZh.webp",
+      "rank": 17,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Dcyqs24xhZh/",
+        "https://www.instagram.com/reel/DVIzYN2CGGR/"
+      ]
+    },
+    {
+      "slug": "cremige-kartoffelpfanne-mit-bacon-champignons",
+      "title": "Cremige Kartoffelpfanne mit Bacon & Champignons",
+      "image": "feed/fffbb185dba74e27542b5c3c.webp",
+      "rank": 18,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DceHniKINad/"
+      ]
+    },
+    {
+      "slug": "cremige-tortellini-mit-schinken-aus-der-ninja-crispi",
+      "title": "Cremige Tortellini mit Schinken aus der Ninja CRISPi",
+      "image": "feed/0c230c48e768fba5a6a75fe8.webp",
+      "rank": 19,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DeEFsuOoBe6/"
+      ]
+    },
+    {
+      "slug": "cremige-champignon-suppe",
+      "title": "Cremige Champignon-Suppe",
+      "image": "feed/e146457162078403b9ecdc38.webp",
+      "rank": 20,
+      "minutes": 30,
+      "links": [
+        "https://www.instagram.com/reel/Df2gRYmoP3k/",
+        "https://www.instagram.com/reel/DU8qnlPiDY7/"
+      ]
+    },
+    {
+      "slug": "cremige-fusilli-mit-hackbaellchen-in-tomatensosse",
+      "title": "Cremige Fusilli mit Hackbällchen in Tomatensoße",
+      "image": "feed/ca3aa66d0fcb2f5e312eb32d.webp",
+      "rank": 21,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DdUHA-rsMhM/"
+      ]
+    },
+    {
+      "slug": "cremiger-paprika-haehnchen-orzo-auflauf-aus-dem-ofen",
+      "title": "Cremiger Paprika-Hähnchen-Orzo-Auflauf aus dem Ofen",
+      "image": "feed/cd15d3b926fc203266573020.webp",
+      "rank": 22,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DadTSPMowc1/"
+      ]
+    },
+    {
+      "slug": "wuerziger-penne-bolognese-auflauf-aus-der-ninja-crispi",
+      "title": "Würziger Penne-Bolognese-Auflauf aus der Ninja CRISPi",
+      "image": "feed/e19b8cd0df608d29b8815563.webp",
+      "rank": 23,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Dfm999qIzkp/"
+      ]
+    },
+    {
+      "slug": "ofen-pasta-mit-schinken-und-kaese-ohne-vorkochen",
+      "title": "Ofen-Pasta mit Schinken und Käse – ohne Vorkochen",
+      "image": "feed/09e2ec0836811354728f1038.webp",
+      "rank": 24,
+      "minutes": 45,
+      "links": [
+        "https://www.instagram.com/reel/DbONAICtidn/"
+      ]
+    },
+    {
+      "slug": "nudel-eintopf-mit-saftigen-hackfleischbaellchen",
+      "title": "Nudel-Eintopf mit saftigen Hackfleischbällchen",
+      "image": "feed/cceb8d6637b1806f7823720c.webp",
+      "rank": 25,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Dd1m_RTIvAR/",
+        "https://www.instagram.com/reel/DVDdfTiCP9_/"
+      ]
+    },
+    {
+      "slug": "knusprige-kaese-wienerrollen-aus-der-heissluftfritteuse",
+      "title": "Knusprige Käse-Wienerrollen aus der Heißluftfritteuse",
+      "image": "feed/80f22fe96af7e3ee45d1b40e.webp",
+      "rank": 26,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DaQZvQoKGOv/"
+      ]
+    },
+    {
+      "slug": "cremige-orzo-pfanne-mit-garnelen-cabanossi",
+      "title": "Cremige Orzo-Pfanne mit Garnelen & Cabanossi",
+      "image": "feed/2a67471122e796ed52a41e56.webp",
+      "rank": 27,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Dax3Mo4okBd/"
+      ]
+    },
+    {
+      "slug": "one-pot-orzo-alfredo-mit-haehnchen",
+      "title": "One-Pot Orzo Alfredo mit Hähnchen",
+      "image": "feed/c1c548a612e2202927f0dc07.webp",
+      "rank": 28,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DaVknjmKGm4/"
+      ]
+    },
+    {
+      "slug": "saftiger-schoko-cheesecake-kuchen",
+      "title": "Saftiger Schoko-Cheesecake-Kuchen",
+      "image": "feed/b39a947162e155d376f5be23.webp",
+      "rank": 29,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/De4at7FoPlV/"
+      ]
+    },
+    {
+      "slug": "knusprige-garlic-parmesan-kartoffelringe",
+      "title": "Knusprige Garlic-Parmesan Kartoffelringe",
+      "image": "feed/ca6a83ee1bfb0683232fb6b2.webp",
+      "rank": 30,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Da5liObIHwp/"
+      ]
+    },
+    {
+      "slug": "roasted-bruschetta-pasta-mit-burrata",
+      "title": "Roasted Bruschetta Pasta mit Burrata",
+      "image": "feed/275e79789937a57d68960736.webp",
+      "rank": 31,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcZHqF1oEIQ/"
+      ]
+    },
+    {
+      "slug": "farfalle-in-cremiger-spinat-speck-sosse",
+      "title": "Farfalle in cremiger Spinat-Speck-Soße",
+      "image": "feed/92833b56fa601ec82a61ff4f.webp",
+      "rank": 32,
+      "minutes": 20,
+      "links": [
+        "https://www.instagram.com/reel/DbdlNoCBBvm/"
+      ]
+    },
+    {
+      "slug": "cremige-rote-pesto-nudeln",
+      "title": "Cremige rote Pesto-Nudeln",
+      "image": "feed/7950c91173645215133e7f5b.webp",
+      "rank": 33,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Db000TkowOj/"
+      ]
+    },
+    {
+      "slug": "knusprige-tortilla-schinken-kaese-rolle-aus-dem-ofen",
+      "title": "Knusprige Tortilla-Schinken-Käse-Rolle aus dem Ofen",
+      "image": "rezepte-bilder/DbJETmNIr78.webp",
+      "rank": 34,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbJETmNIr78/"
+      ]
+    },
+    {
+      "slug": "chorizo-gnocchi-auflauf",
+      "title": "Chorizo-Gnocchi-Auflauf",
+      "image": "rezepte-bilder/DbvwFk_MVsv.webp",
+      "rank": 35,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbvwFk_MVsv/"
+      ]
+    },
+    {
+      "slug": "coban-salatas-tuerkischer-bauernsalat",
+      "title": "Çoban Salatası – türkischer Bauernsalat",
+      "image": "feed/2d2f022468971627fadabb2d.webp",
+      "rank": 36,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcEZbUbIAVI/"
+      ]
+    },
+    {
+      "slug": "pizza-bagels-in-nur-15-minuten",
+      "title": "Pizza-Bagels in nur 15 Minuten",
+      "image": "rezepte-bilder/Db8nzYBqp5a.webp",
+      "rank": 37,
+      "minutes": 15,
+      "links": [
+        "https://www.instagram.com/reel/Db8nzYBqp5a/",
+        "https://www.instagram.com/reel/DUqkLIWiMOm/"
+      ]
+    },
+    {
+      "slug": "milchbroetchen-mit-zuckerkruste",
+      "title": "Milchbrötchen mit Zuckerkruste",
+      "image": "feed/2579f4e8b7fb4b5ecd33d861.webp",
+      "rank": 38,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Da3A6_HoTbn/"
+      ]
+    },
+    {
+      "slug": "cremiger-reis-eintopf-mit-hackfleischbaellchen",
+      "title": "Cremiger Reis-Eintopf mit Hackfleischbällchen",
+      "image": "feed/b73c47b1b9858b7e098182d5.webp",
+      "rank": 39,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DfFnduKosf8/"
+      ]
+    },
+    {
+      "slug": "mini-paprikas-mit-camembert-im-speckmantel",
+      "title": "Mini-Paprikas mit Camembert im Speckmantel",
+      "image": "feed/8d1a75ee80542aae4d1ad1cb.webp",
+      "rank": 40,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbiuOXpB6bi/"
+      ]
+    },
+    {
+      "slug": "cremige-alfredo-pasta-mit-haehnchen-champignons",
+      "title": "Cremige Alfredo-Pasta mit Hähnchen & Champignons",
+      "image": "feed/18fac6909290bbef179cd0c9.webp",
+      "rank": 41,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcOtCotIk1-/"
+      ]
+    },
+    {
+      "slug": "erdbeer-schmand-kuchen",
+      "title": "Erdbeer-Schmand-Kuchen",
+      "image": "feed/56ff59d2f7273890c648da7b.webp",
+      "rank": 42,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/Dbn9mGPINbO/"
+      ]
+    },
+    {
+      "slug": "cremige-tomaten-gnocchi-mit-mozzarella",
+      "title": "Cremige Tomaten-Gnocchi mit Mozzarella",
+      "image": "feed/128f6142965ef3194325061a.webp",
+      "rank": 43,
+      "minutes": 20,
+      "links": [
+        "https://www.instagram.com/reel/DcG67oZI4TX/"
+      ]
+    },
+    {
+      "slug": "fluffige-butterbroetchen",
+      "title": "Fluffige Butterbrötchen",
+      "image": "feed/e339657f2149d5374ce1e90a.webp",
+      "rank": 44,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DctiPWjo4Ad/"
+      ]
+    },
+    {
+      "slug": "cremige-one-pot-orzo-pfanne-mit-champignons-spinat",
+      "title": "Cremige One-Pot-Orzo-Pfanne mit Champignons & Spinat",
+      "image": "feed/173dfb79945a03a36091ce13.webp",
+      "rank": 45,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DehZp7NIyvt/"
+      ]
+    },
+    {
+      "slug": "butterreis-mit-geroesteten-suppennudeln",
+      "title": "Butterreis mit gerösteten Suppennudeln",
+      "image": "feed/5134cf95ceac731426fdb1da.webp",
+      "rank": 46,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcbfYvjoW5Y/"
+      ]
+    },
+    {
+      "slug": "cremiger-kartoffel-haehnchen-auflauf",
+      "title": "Cremiger Kartoffel-Hähnchen-Auflauf",
+      "image": "feed/482524dc0a454778d852a9c0.webp",
+      "rank": 47,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DfkdWV-Isdo/"
+      ]
+    },
+    {
+      "slug": "no-bake-white-raspberry-dream",
+      "title": "No-Bake White Raspberry Dream",
+      "image": "feed/1da8f2944416819274c095ad.webp",
+      "rank": 48,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcRI0hMoibH/"
+      ]
+    },
+    {
+      "slug": "knusprige-mini-butterkartoffeln-mit-knoblauch-kraeutern",
+      "title": "Knusprige Mini-Butterkartoffeln mit Knoblauch & Kräutern",
+      "image": "feed/28ad6cb9726c56a525b9a244.webp",
+      "rank": 49,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DfmRX_Mo46U/"
+      ]
+    },
+    {
+      "slug": "mini-sandwiches-3-schnelle-ideen",
+      "title": "Mini-Sandwiches – 3 schnelle Ideen",
+      "image": "rezepte-bilder/DbD5psGI1Vl.webp",
+      "rank": 50,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbD5psGI1Vl/"
+      ]
+    },
+    {
+      "slug": "maxi-king-schnitte-ohne-backen",
+      "title": "Maxi-King-Schnitte ohne Backen",
+      "image": "feed/faad90a133b4ad4c02e1edc6.webp",
+      "rank": 51,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcWTTLNImFQ/"
+      ]
+    },
+    {
+      "slug": "nudeln-mit-saftigen-fleischbaellchen-in-cremiger-tomaten-sah",
+      "title": "Nudeln mit saftigen Fleischbällchen in cremiger Tomaten-Sahne-Soße",
+      "image": "feed/eecf9ad43e864306b61b85d7.webp",
+      "rank": 52,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DbtKaalIcP6/"
+      ]
+    },
+    {
+      "slug": "hackbaellchen-in-paprika-sahne-sosse",
+      "title": "Hackbällchen in Paprika-Sahne-Soße",
+      "image": "feed/d02d2513cabd0a90b606b16e.webp",
+      "rank": 53,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DblZ8VLBF04/"
+      ]
+    },
+    {
+      "slug": "cremige-haehnchen-bacon-tortilla-pfanne",
+      "title": "Cremige Hähnchen-Bacon-Tortilla-Pfanne",
+      "image": "feed/b8c4eb8577bd489894104903.webp",
+      "rank": 54,
+      "minutes": 15,
+      "links": [
+        "https://www.instagram.com/reel/DUkvkfCiOCj/"
+      ]
+    },
+    {
+      "slug": "ofen-tomatensuppe",
+      "title": "Ofen-Tomatensuppe",
+      "image": "feed/f6326048ac5ca417d6fdd700.webp",
+      "rank": 55,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DdCH3DKoI7r/"
+      ]
+    },
+    {
+      "slug": "mini-cinnamon-roll-cheesecake",
+      "title": "Mini Cinnamon Roll Cheesecake",
+      "image": "rezepte-bilder/DV52mYZiGEK.webp",
+      "rank": 56,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DV52mYZiGEK/"
+      ]
+    },
+    {
+      "slug": "cremiger-rucola-taboule-salat",
+      "title": "Cremiger Rucola-Taboulé-Salat",
+      "image": "feed/8ade538fa251c68f12ccd8c1.webp",
+      "rank": 57,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcMAyWnoZUS/"
+      ]
+    },
+    {
+      "slug": "thunfisch-ei-aufstrich-mit-butter-baguette",
+      "title": "Thunfisch-Ei-Aufstrich mit Butter-Baguette",
+      "image": "rezepte-bilder/DdErY1UopsH.webp",
+      "rank": 58,
+      "minutes": 10,
+      "links": [
+        "https://www.instagram.com/reel/DdErY1UopsH/"
+      ]
+    },
+    {
+      "slug": "knuspriger-beeren-streuselkuchen",
+      "title": "Knuspriger Beeren-Streuselkuchen",
+      "image": "feed/dea04abf06f11404d9b63c4a.webp",
+      "rank": 59,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DZ13HbNIN1G/"
+      ]
+    },
+    {
+      "slug": "orzo-salat-mit-feta-bacon",
+      "title": "Orzo Salat mit Feta & Bacon",
+      "image": "feed/a4c33e7bffcab4a5929fe95d.webp",
+      "rank": 60,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DcgqL7hoYhj/"
+      ]
+    },
+    {
+      "slug": "cremige-one-pot-pasta-mit-champignons",
+      "title": "Cremige One-Pot-Pasta mit Champignons",
+      "image": "feed/2a3744f658f01cabbaf5df8b.webp",
+      "rank": 61,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DUvNfj5iGLb/"
+      ]
+    },
+    {
+      "slug": "polnisches-leczo",
+      "title": "Polnisches Leczo",
+      "image": "feed/b451dd38d16c2f289f12f270.webp",
+      "rank": 62,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/De9u0oHo2mb/"
+      ]
+    },
+    {
+      "slug": "faule-knoedel-kluski-leniwe-mit-hausgemachter-blaubeersauce",
+      "title": "Faule Knödel (Kluski leniwe) mit hausgemachter Blaubeersauce",
+      "image": "feed/bc1cbfb4973b6ba076524931.webp",
+      "rank": 63,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DfsRNreIkeS/"
+      ]
+    },
+    {
+      "slug": "ultra-cremige-tomaten-knoblauch-pasta",
+      "title": "Ultra cremige Tomaten-Knoblauch-Pasta",
+      "image": "feed/b5268b7501a3d5d980f26062.webp",
+      "rank": 64,
+      "minutes": null,
+      "links": [
+        "https://www.instagram.com/reel/DTc6ZAzCDyT/"
+      ]
+    }
+  ]
+}
