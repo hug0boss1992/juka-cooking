@@ -170,6 +170,13 @@ function recipePage(r) {
         </ol>
         ${r.tip ? `<p class="rn-tip"><strong>Tipp:</strong> ${esc(r.tip)}</p>` : ''}
       </section>
+      <aside class="rn-save" aria-label="Rezept merken">
+        <img src="../pins/${esc(r.slug)}.jpg" alt="${esc(r.title)} – Rezeptbild zum Merken" width="1000" height="1500" loading="lazy" decoding="async">
+        <div>
+          <h2>Rezept für später merken</h2>
+          <p>Speichere das Bild auf Pinterest oder teile den Link dieser Seite – dann findest du das Rezept jederzeit wieder.</p>
+        </div>
+      </aside>
     </article>
   </main>
   ${footer}
