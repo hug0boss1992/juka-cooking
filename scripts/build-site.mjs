@@ -189,7 +189,6 @@ try {
   const { bio, links, partners } = readContent(config);
   const page = template.replace('<!-- BIO -->', () => bio.join('<br>'))
     .replace('<!-- RECIPE_NAV -->', () => recipes.length ? '<a href="rezepte/">Rezepte</a>' : '')
-    .replace('<!-- RECIPE_BUTTON -->', () => recipes.length ? `<a class="hero-recipes" href="rezepte/">Alle ${recipes.length} Rezepte</a>` : '')
     .replace('<!-- RECIPES -->', () => renderRecipes(recipes))
     .replace('<!-- CONTACT_LINKS -->', () => renderContactLinks(links))
     .replace('<!-- PARTNER_NAV -->', () => partners.length ? '<a href="#empfehlungen">Empfehlungen</a>' : '')
