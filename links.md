@@ -38,4 +38,4 @@ UGC & Kooperationen mit Marken, die ich wirklich nutze.
 ### Amazon
 
 - Logo: ![](products/amazon-logo.svg)
-- Shop: [Zur Amazon-Startseite](https://link.amazon/B07WuKcTW)
+- Shop: [Zur Amazon-Startseite](https://www.amazon.de/?tag=jukawebsite-21)
