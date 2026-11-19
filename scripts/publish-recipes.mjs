@@ -85,10 +85,11 @@ const head = (title, description, extra = '') => `<!doctype html>
   <meta name="description" content="${esc(description)}">
   <meta name="theme-color" content="#f8f3e9">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' https://qwfbzcbcfznctzyoqbky.supabase.co; base-uri 'none'; form-action 'none'">
   <title>${esc(title)}</title>
   <link rel="stylesheet" href="../styles.css">
-  <link rel="stylesheet" href="rezepte.css">${extra}`;
+  <link rel="stylesheet" href="rezepte.css">
+  <script src="../klick.js" defer></script>${extra}`;
 
 const header = `<header class="site-header">
     <div class="wrap site-header-inner">

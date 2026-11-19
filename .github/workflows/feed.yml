@@ -29,6 +29,9 @@ jobs:
         with:
           node-version: '24'
           package-manager-cache: false
+      - name: Klickzähler wach halten (Supabase pausiert sonst nach 7 Tagen)
+        continue-on-error: true
+        run: curl -fsS --max-time 30 'https://qwfbzcbcfznctzyoqbky.supabase.co/functions/v1/klick?keepalive=1' || echo '::warning::Klickzähler nicht erreichbar'
       - name: Originale Partnerbilder lokal abrufen
         run: |
           node scripts/sync-brand-assets.mjs
