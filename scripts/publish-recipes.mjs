@@ -97,6 +97,7 @@ const header = `<header class="site-header">
       <nav class="section-links" aria-label="Seitennavigation">
         <a href="./" aria-current="page">Rezepte</a>
         <a href="../index.html#beitraege">Beiträge</a>
+        <a href="../kooperationen/">Kooperationen</a>
       </nav>
     </div>
   </header>`;
