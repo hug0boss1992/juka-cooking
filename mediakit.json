@@ -1,0 +1,241 @@
+{
+  "_hinweis": "Daten für juka-cooking.de/kooperationen. Erzeugt wird die Seite mit: node scripts/build-mediakit.mjs. Der Statistik-Bot aktualisiert die Zahlen hier monatlich. null bedeutet: Wert fehlt noch (in der Vorschau als Platzhalter markiert, auf der Live-Seite ausgeblendet).",
+  "stand": {
+    "instagram": "17. August bis 16. November 2026",
+    "tiktok": "TikTok Studio, 19. November 2026"
+  },
+  "kopf": {
+    "name": "Justyna",
+    "rolle": "Food-Creatorin",
+    "claim": "Schnelle Alltagsrezepte, die man wirklich nachkocht.",
+    "text": "Auf Instagram und TikTok zeige ich einfache Gerichte für jeden Tag: Frühstück in fünf Minuten, Pasta aus einem Topf, Aufläufe aus der Heißluftfritteuse. Kurz, ehrlich und mit dem Rezept direkt in der Beschreibung. Produkte zeige ich so, wie ich sie selbst in meiner Küche nutze."
+  },
+  "instagram": {
+    "profil": "https://www.instagram.com/juka.cooking/",
+    "follower": 20453,
+    "wachstumQuartal": 98,
+    "erreichteKonten": 4800000,
+    "nichtFollowerAnteil": 99.7,
+    "impressionen": 8300000,
+    "medianWiedergaben": 12400,
+    "oberesViertelAb": 94000,
+    "reelsUeber1Mio": 3,
+    "reelsUeber100k": 40,
+    "speicherrate": 2.1,
+    "teilrate": 0.8,
+    "gespeichertQuartal": 199455,
+    "geteiltQuartal": 71236
+  },
+  "tiktok": {
+    "profil": "https://www.tiktok.com/@juka.cooking",
+    "follower": 27000,
+    "likes": 744000,
+    "aufrufe12Monate": 37200000,
+    "aufrufe60Tage": 8500000,
+    "wachstumAufrufe60Tage": 36.9,
+    "neueZuschauer60Tage": 4200000,
+    "geteilt12Monate": 228700,
+    "profilaufrufe12Monate": 113700,
+    "anteilFuerDich": 86.1,
+    "anteilSuche": 11.9,
+    "topVideos": [
+      3700000,
+      3400000,
+      2400000
+    ],
+    "durchschnittAufrufe": null
+  },
+  "zielgruppe": {
+    "instagram": {
+      "quelle": "Instagram-Follower, letztes Quartal",
+      "frauen": 77.7,
+      "maenner": 22.2,
+      "alter": [
+        {
+          "gruppe": "25–34",
+          "anteil": 17.8
+        },
+        {
+          "gruppe": "35–44",
+          "anteil": 32.3
+        },
+        {
+          "gruppe": "45–54",
+          "anteil": 25.5
+        },
+        {
+          "gruppe": "55–64",
+          "anteil": 11.5
+        }
+      ],
+      "laender": [
+        {
+          "land": "Deutschland",
+          "anteil": 38.9
+        },
+        {
+          "land": "Frankreich",
+          "anteil": 5.7
+        },
+        {
+          "land": "Polen",
+          "anteil": 4.3
+        },
+        {
+          "land": "Tschechien",
+          "anteil": 3.7
+        },
+        {
+          "land": "Spanien",
+          "anteil": 3.6
+        }
+      ]
+    },
+    "tiktok": {
+      "quelle": "TikTok-Follower, Stand 19. November 2026",
+      "frauen": 70,
+      "maenner": 29,
+      "alter": [
+        {
+          "gruppe": "18–24",
+          "anteil": 6.8
+        },
+        {
+          "gruppe": "25–34",
+          "anteil": 23.7
+        },
+        {
+          "gruppe": "35–44",
+          "anteil": 30.5
+        },
+        {
+          "gruppe": "45–54",
+          "anteil": 24.8
+        },
+        {
+          "gruppe": "55+",
+          "anteil": 14.2
+        }
+      ],
+      "laender": [
+        {
+          "land": "Deutschland",
+          "anteil": 38.7
+        },
+        {
+          "land": "Frankreich",
+          "anteil": 7.1
+        },
+        {
+          "land": "Rumänien",
+          "anteil": 5.4
+        },
+        {
+          "land": "Bulgarien",
+          "anteil": 4.8
+        },
+        {
+          "land": "Polen",
+          "anteil": 3.8
+        }
+      ]
+    },
+    "hinweisAusland": "Auf beiden Plattformen leben rund 39 % der Follower in Deutschland, der Rest verteilt sich auf viele Länder. Meine Videos und Rezepte sind auf Deutsch. Wer nur in Deutschland verkauft, erreicht also vor allem diesen Teil und die Deutschsprachigen in den übrigen Ländern."
+  },
+  "partner": [
+    {
+      "name": "SharkNinja",
+      "logo": "products/sharkninja-logo.svg",
+      "text": "Rezepte aus der Ninja CRISPi PRO, Black-Friday-Aktion und Event-Besuch beim Ninja Coffee Rave in Berlin.",
+      "beispiele": [
+        {
+          "link": "https://www.instagram.com/reel/Dfm999qIzkp/",
+          "titel": "Penne-Bolognese-Auflauf aus der Ninja CRISPi"
+        },
+        {
+          "link": "https://www.instagram.com/reel/DeEFsuOoBe6/",
+          "titel": "Cremige Tortellini mit Schinken"
+        },
+        {
+          "link": "https://www.instagram.com/reel/DeCbgP4oPpj/",
+          "titel": "Butternut-Pasta"
+        },
+        {
+          "link": "https://www.instagram.com/reel/DcTxxSiImDw/",
+          "titel": "Tortilla-Frühstück aus der Heißluftfritteuse"
+        }
+      ]
+    },
+    {
+      "name": "Naughty Nuts",
+      "logo": "products/naughty-nuts-logo.png",
+      "text": "Rezepte mit Nusscremes und Granola, eigener Rabattcode und ein Gewinnspiel zu 20.000 Followern.",
+      "beispiele": [
+        {
+          "link": "https://www.instagram.com/reel/Dd-2k06I1gv/",
+          "titel": "Frühstücks-Bowl mit Mr. Tom Creme"
+        },
+        {
+          "link": "https://www.instagram.com/p/DdrSsb1CA0_/",
+          "titel": "Knusprige Zimt-Tortilla-Röllchen"
+        },
+        {
+          "link": "https://www.instagram.com/reel/DfxXx-poMn6/",
+          "titel": "Gewinnspiel zu 20.000 Followern"
+        }
+      ]
+    },
+    {
+      "name": "GIU Pizzaofen",
+      "logo": null,
+      "text": "Pizza-Rezepte aus dem GIU Falò Pizzaofen.",
+      "beispiele": [
+        {
+          "link": "https://www.instagram.com/reel/DdbFWYeoidL/",
+          "titel": "Chicken-Alfredo-Pizza aus dem GIU Falò"
+        },
+        {
+          "link": "https://www.instagram.com/reel/DcjM6HEIozh/",
+          "titel": "Pizzaabend mit dem GIU Falò"
+        }
+      ]
+    },
+    {
+      "name": "Yotsuba Knives",
+      "logo": null,
+      "text": "Küchenmesser im Alltagstest.",
+      "beispiele": [
+        {
+          "link": "https://www.instagram.com/reel/DfUAiM2IWpA/",
+          "titel": "Yotsuba-Messer in meiner Küche"
+        }
+      ]
+    }
+  ],
+  "angebote": [
+    {
+      "id": "tiktok",
+      "titel": "TikTok-Video",
+      "text": "Ein kurzes Rezeptvideo mit Ihrem Produkt im gewohnten Stil, mit dem Rezept in der Beschreibung.",
+      "preis": null
+    },
+    {
+      "id": "reel",
+      "titel": "Instagram-Reel mit Storys",
+      "text": "Ein Reel auf @juka.cooking und dazu eine Story-Sequenz mit Link zu Ihrem Produkt.",
+      "preis": null
+    },
+    {
+      "id": "ugc",
+      "titel": "UGC-Video",
+      "text": "Ein Video für Ihre eigenen Kanäle oder Anzeigen, ohne Veröffentlichung bei mir. Nutzungsrechte nach Absprache.",
+      "preis": null
+    }
+  ],
+  "preiseAnzeigen": false,
+  "kontakt": {
+    "mail": "juka.cooking@gmail.com",
+    "betreff": "Kooperationsanfrage",
+    "vorlage": "Hallo Justyna,\n\nMarke und Produkt:\nGewünschtes Format (TikTok, Reel mit Storys, UGC):\nZeitraum:\nBudget:\n\nViele Grüße"
+  }
+}

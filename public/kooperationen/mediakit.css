@@ -1,0 +1,87 @@
+/* Mediakit juka-cooking.de/kooperationen. Ergänzt styles.css. */
+
+.mk-kicker { margin: 0 0 0.4rem; color: var(--clay); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+.mk-actions { margin: 1rem 0 0; }
+.mk-button {
+  display: inline-flex; align-items: center; min-height: 48px; padding: 0 1.4rem;
+  border-radius: 999px; background: var(--green); color: #fff; font-weight: 700; text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.mk-button:hover { background: #2f4630; }
+
+.mk-section { padding-block: clamp(1.8rem, 4.5vw, 3.4rem); }
+.mk-section h2 { margin: 0 0 1.2rem; font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1.08; letter-spacing: -0.036em; }
+.mk-band { background: linear-gradient(180deg, #eef1e6, var(--canvas)); border-block: 1px solid #e3e6d8; }
+.mk-lead { max-width: 44rem; margin: 1rem 0 0; color: var(--muted); font-size: clamp(1rem, 2vw, 1.12rem); line-height: 1.55; }
+.mk-source, .mk-small { margin: 0.75rem 0 0; color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
+
+.mk-platforms { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); gap: clamp(1rem, 3vw, 2rem); }
+.mk-platform h3 { margin: 0 0 0.7rem; font: 700 1.25rem/1.2 var(--serif); }
+.mk-platform h3 a { text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
+.mk-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem; }
+.mk-stats-two { max-width: 36rem; }
+.mk-stat {
+  display: grid; align-content: start; gap: 0.15rem; padding: 0.9rem 1rem;
+  border: 1px solid var(--line); border-radius: 0.85rem; background: var(--paper);
+}
+.mk-stat strong { color: var(--green); font: 700 clamp(1.45rem, 3.4vw, 2rem)/1.1 var(--serif); letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.mk-stat span { font-weight: 650; font-size: 0.92rem; }
+.mk-stat small { color: var(--muted); font-size: 0.8rem; line-height: 1.4; }
+
+/* Platzhalter: nur in der Vorschau sichtbar */
+.mk-todo { border: 2px dashed var(--clay); background: #fbf1e8; }
+.mk-todo strong, .mk-todo h3 { color: var(--clay); }
+.mk-todo-tag {
+  justify-self: start; width: fit-content; padding: 0.15rem 0.55rem; border-radius: 999px;
+  background: var(--clay); color: #fff !important; font-size: 0.72rem !important; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+}
+.mk-todo-inline { display: flex; align-items: center; gap: 0.5rem; color: var(--clay) !important; }
+
+.mk-audience { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 0.8rem; }
+.mk-card { display: grid; align-content: start; gap: 0.4rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 0.85rem; background: var(--paper); }
+.mk-card h3 { margin: 0; font: 700 1.1rem/1.25 var(--serif); }
+.mk-card p { margin: 0; }
+.mk-card .mk-small { margin-top: 0.35rem; }
+.mk-big { color: var(--green); font: 700 2rem/1.1 var(--serif); }
+.mk-big span { color: var(--ink); font: 650 1rem/1 system-ui, sans-serif; }
+.mk-bar { display: block; width: 100%; height: 0.6rem; }
+.mk-bar-bg { fill: #ece6da; }
+.mk-bar-fg { fill: var(--green); }
+.mk-rows { display: grid; gap: 0.45rem; margin: 0.2rem 0 0; padding: 0; list-style: none; }
+.mk-rows li { display: grid; grid-template-columns: 6.2rem minmax(0, 1fr) 3.6rem; align-items: center; gap: 0.6rem; font-size: 0.9rem; }
+.mk-rows b { text-align: right; font-variant-numeric: tabular-nums; }
+
+.mk-partner + .mk-partner { margin-top: clamp(1.4rem, 3vw, 2.2rem); }
+.mk-partner-head { display: flex; align-items: center; flex-wrap: wrap; gap: 0.6rem 1.25rem; margin-bottom: 0.85rem; }
+.mk-partner-head p { flex: 1 1 18rem; margin: 0; color: var(--muted); line-height: 1.5; }
+.mk-partner-logo { width: auto; max-width: 11rem; height: 2.5rem; object-fit: contain; }
+.mk-examples { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.mk-examples h4 { font-weight: 650; }
+
+.mk-offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); gap: 0.8rem; margin: 0; padding: 0; list-style: none; }
+.mk-offers .mk-card { gap: 0.6rem; }
+.mk-offers .mk-card > p:not(.mk-price) { color: var(--muted); line-height: 1.5; }
+.mk-price { margin-top: auto !important; padding-top: 0.5rem; border-top: 1px solid var(--line); color: var(--green); font-weight: 700; }
+
+.mk-contact .mk-section { text-align: left; }
+
+/* Vorschau-Leiste */
+.mk-preview { background: var(--clay); color: #fff; font-size: 0.85rem; }
+.mk-preview-inner { display: flex; align-items: center; flex-wrap: wrap; gap: 0.2rem 0.9rem; min-height: 2.75rem; padding-block: 0.3rem; }
+.mk-preview a { display: inline-flex; align-items: center; min-height: 36px; padding: 0 0.75rem; border: 1px solid #fff8; border-radius: 999px; color: #fff; text-decoration: none; font-weight: 650; }
+.mk-preview a[aria-current="page"] { background: #fff; color: var(--clay); }
+.mk-preview-note { opacity: 0.9; }
+
+@media (max-width: 48rem) {
+  .mk-examples { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 36rem) {
+  .mk-stat { padding: 0.75rem 0.8rem; }
+  .mk-rows li { grid-template-columns: 5.4rem minmax(0, 1fr) 3.3rem; }
+  .mk-actions { display: flex; justify-content: center; }
+}
+.mk-examples img { height: auto; }
+.mk-audience > .mk-todo { grid-column: 1 / -1; }
+.mk-audience-title { margin: 1.4rem 0 0.6rem; font: 700 1.25rem/1.2 var(--serif); }
+.mk-card h4 { margin: 0; font: 700 1.05rem/1.25 var(--serif); }
+.mk-partner-name { margin: 0; color: #3a4932; font: 700 1.35rem/1.1 var(--serif); }
