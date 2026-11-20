@@ -69,7 +69,13 @@ async function storeCaptions(recent, downloads, captionsFile) {
   });
   for (const [index, { id, permalink, post, date }] of recent.entries()) {
     if (typeof post.caption !== 'string' || !post.caption.trim()) continue;
-    known[id] = { permalink, caption: post.caption.slice(0, 5000), publishedAt: new Date(date).toISOString(), image: downloads[index].entry.image };
+    // Größte angebotene Bildfassung für Rezeptseite und Pinterest-Bild (wird vom Rezept-Bot geladen).
+    const sizes = Object.values(post.sizes || {}).filter((size) => typeof size?.mediaUrl === 'string' && beholdImage.test(size.mediaUrl));
+    const largest = sizes.sort((a, b) => (b.width || 0) * (b.height || 0) - (a.width || 0) * (a.height || 0))[0];
+    const original = typeof post.mediaUrl === 'string' && beholdImage.test(post.mediaUrl) ? post.mediaUrl : undefined;
+    known[id] = { permalink, caption: post.caption.slice(0, 5000), publishedAt: new Date(date).toISOString(), image: downloads[index].entry.image,
+      ...(largest?.mediaUrl ? { imageUrl: largest.mediaUrl, imageWidth: largest.width || null } : {}),
+      ...(original && original !== largest?.mediaUrl ? { imageUrlOriginal: original } : {}) };
   }
   const sorted = Object.fromEntries(Object.entries(known).sort(([, a], [, b]) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt)));
   await mkdir(new URL('./', captionsFile), { recursive: true });

@@ -9,16 +9,25 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUBLIC = os.path.join(ROOT, 'public')
 OUT = os.path.join(PUBLIC, 'pins')
-FONTS = 'C:/Windows/Fonts'
 W, H = 1000, 1500
 BAND = 430
 GREEN = (62, 89, 63)
 CREAM = (255, 253, 248)
 CLAY = (232, 196, 170)
 
-title_font = lambda size: ImageFont.truetype(os.path.join(FONTS, 'georgiab.ttf'), size)
-small_font = ImageFont.truetype(os.path.join(FONTS, 'seguisb.ttf'), 34)
-kicker_font = ImageFont.truetype(os.path.join(FONTS, 'seguisb.ttf'), 30)
+# Unter Windows Georgia/Segoe wie bisher; auf GitHub (Linux) die freien Schriften aus scripts/fonts/
+# (PT Serif Bold und Lato SemiBold, beide SIL Open Font License).
+WINDOWS = 'C:/Windows/Fonts'
+OWN = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fonts')
+if os.path.exists(os.path.join(WINDOWS, 'georgiab.ttf')) and '--freie-schriften' not in sys.argv:
+    TITLE, SANS = os.path.join(WINDOWS, 'georgiab.ttf'), os.path.join(WINDOWS, 'seguisb.ttf')
+else:
+    TITLE, SANS = os.path.join(OWN, 'PTSerif-Bold.ttf'), os.path.join(OWN, 'Lato-SemiBold.ttf')
+
+title_font = lambda size: ImageFont.truetype(TITLE, size)
+small_font = ImageFont.truetype(SANS, 34)
+kicker_font = ImageFont.truetype(SANS, 30)
+ONLY_MISSING = '--nur-neue' in sys.argv
 
 
 def cover(img, w, h):
@@ -82,9 +91,14 @@ def main():
     for name in os.listdir(OUT):
         if name not in keep:
             os.remove(os.path.join(OUT, name))
+    made = 0
     for recipe in recipes:
+        # --nur-neue: bestehende Pins nicht neu zeichnen (täglicher Lauf auf GitHub)
+        if ONLY_MISSING and os.path.exists(os.path.join(OUT, f"{recipe['slug']}.jpg")):
+            continue
         make(recipe)
-    sys.stdout.write(f'{len(recipes)} Pinterest-Bilder in public/pins/\n')
+        made += 1
+    sys.stdout.write(f'{made} Pinterest-Bilder erzeugt, {len(recipes)} insgesamt in public/pins/\n')
 
 
 main()

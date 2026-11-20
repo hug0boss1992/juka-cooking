@@ -16,10 +16,11 @@ jobs:
   prepare:
     if: github.ref_name == github.event.repository.default_branch
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 45
     environment: tiktok-feed
     permissions:
       contents: write
+      issues: write
     steps:
       - uses: actions/checkout@v6
         with:
@@ -50,6 +51,36 @@ jobs:
             node scripts/update-feed.mjs
             git add -A -- public/ data/
           fi
+      # Rezept-Bot: neue Beiträge mit Rezept prüfen, Bild hochauflösend machen (Real-ESRGAN über PyTorch),
+      # Rezeptseite und Pinterest-Bild veröffentlichen. Pinterest holt neue Pins über
+      # https://juka-cooking.de/rezepte/pinterest.xml ab. Unsicheres wird zurückgehalten und gemeldet.
+      - name: Neue Rezepte suchen
+        id: recipes
+        if: github.event_name != 'push'
+        run: echo "open=$(node scripts/recipe-bot.mjs offen)" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v6
+        if: steps.recipes.outputs.open != '' && steps.recipes.outputs.open != '0'
+        with:
+          python-version: '3.12'
+      - name: Neue Rezepte automatisch veröffentlichen
+        id: publish
+        if: steps.recipes.outputs.open != '' && steps.recipes.outputs.open != '0'
+        env:
+          RECIPE_BOT_REPORT: ${{ runner.temp }}/rezept-bericht.md
+        run: |
+          # Real-ESRGAN (Fotomodell realesr-general-x4v3) über PyTorch auf dem Prozessor, ca. 15 s pro Bild
+          pip install --quiet 'pillow==11.3.0' 'numpy<3' 'spandrel==0.4.1' torch --extra-index-url https://download.pytorch.org/whl/cpu
+          node scripts/recipe-bot.mjs auto
+          node scripts/publish-recipes.mjs
+          python scripts/make-pin-images.py --nur-neue
+          git add -A -- data/ public/
+          if [ -s "$RECIPE_BOT_REPORT" ]; then echo 'held=1' >> "$GITHUB_OUTPUT"; fi
+      - name: Zurückgehaltene Rezepte melden
+        if: steps.publish.outputs.held == '1'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh issue create --title "Rezept-Bot: Rezept zurückgehalten ($(date -u +%d.%m.%Y))" --body-file "$RUNNER_TEMP/rezept-bericht.md"
       - name: Änderungen und monatliches Lebenszeichen sichern
         env:
           EVENT_NAME: ${{ github.event_name }}

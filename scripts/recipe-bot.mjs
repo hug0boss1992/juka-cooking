@@ -7,15 +7,17 @@
 //
 // Ablauf: Der tägliche Feed-Lauf auf GitHub speichert die vollständigen Beschreibungen in
 // data/instagram-beschreibungen.json. Der Bot übernimmt Beiträge mit Zutaten und Zubereitung als
-// status „entwurf“ in intern/rezepte-quelle.json und baut die Vorschau in intern/rezepte-entwuerfe/.
-// Veröffentlicht wird erst nach der Freigabe mit scripts/publish-recipes.mjs und make-pin-images.py.
-import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+// status „entwurf“ in data/rezepte-quelle.json. Täglich auf GitHub: „auto“ prüft streng, macht das Bild
+// hochauflösend (rezeptbild.py, Real-ESRGAN) und veröffentlicht oder hält mit Grund zurück. Lokal: Vorschau in intern/rezepte-entwuerfe/.
+import { spawnSync } from 'node:child_process';
+import { cp, readFile, rm, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { publishRecipes } from './publish-recipes.mjs';
 import { parseRecipe, slugify } from './recipe-parse.mjs';
 
 const root = new URL('../', import.meta.url);
 const file = (path) => new URL(path, root);
-const sourceFile = file('intern/rezepte-quelle.json');
+const sourceFile = file('data/rezepte-quelle.json');
 const captionsFile = file('data/instagram-beschreibungen.json');
 const previewDir = file('intern/rezepte-entwuerfe/');
 const shortcode = (link) => link.replace(/\/$/, '').split('/').pop();
@@ -114,14 +116,99 @@ export async function buildPreview() {
   return drafts;
 }
 
+// Strenge Prüfung für den Automatik-Modus: lieber zurückhalten als ein fehlerhaftes Rezept zeigen.
+export function qualityProblems(source) {
+  const recipe = parseRecipe(source.caption);
+  if (!recipe) return ['kein vollständiges Rezept erkannt'];
+  const problems = [];
+  const ingredients = recipe.ingredients.filter((item) => !/:$/.test(item));
+  const steps = recipe.steps.join(' ');
+  if (ingredients.length < 3) problems.push(`nur ${ingredients.length} Zutaten erkannt`);
+  if (recipe.steps.length < 2) problems.push(`nur ${recipe.steps.length} Zubereitungsschritt erkannt`);
+  if (recipe.title.length < 4 || recipe.title.length > 90 || /[@#]/.test(recipe.title)) problems.push('Titel unklar');
+  if (ingredients.some((item) => item.length > 120) || recipe.steps.some((step) => step.length > 600)) problems.push('Zutaten oder Schritte ungewöhnlich lang');
+  if (/\b(backen|ofen|backofen|überbacken)\b/i.test(steps)) {
+    if (!/\d+\s*(°|grad)/i.test(steps)) problems.push('Ofentemperatur fehlt');
+    if (!/\d+\s*(min|minuten|std|stunden)\b/i.test(steps)) problems.push('Backzeit fehlt');
+  }
+  if (source.moeglichesDoppelVon) problems.push(`ähnliches Rezept gibt es schon (${source.moeglichesDoppelVon})`);
+  return problems;
+}
+
+function makeImage(source, target) {
+  const python = process.env.PYTHON || (process.platform === 'win32' ? 'python' : 'python3');
+  const result = spawnSync(python, [fileURLToPath(new URL('rezeptbild.py', import.meta.url)), source, fileURLToPath(target)], { encoding: 'utf8', timeout: 1_000_000 });
+  let report = null;
+  try { report = JSON.parse(result.stdout.trim().split('\n').pop()); } catch { /* unten gemeldet */ }
+  if (result.status !== 0 && result.status !== 2) throw new Error(`Bildprüfung fehlgeschlagen: ${(result.stderr || result.error?.message || '').trim().split('\n').pop()}`);
+  return report;
+}
+
+// Täglicher Lauf auf GitHub: neue Rezepte prüfen, Bild hochauflösend machen, veröffentlichen
+// oder mit Grund zurückhalten. Schreibt einen kurzen Bericht für die Benachrichtigung.
+export async function autoPublish({ reportFile } = {}) {
+  const { added } = await findNewRecipes();
+  const sources = await readJson(sourceFile, []);
+  const captions = await readJson(captionsFile, {});
+  const published = [];
+  const held = [];
+  for (const source of sources.filter((s) => s.status === 'entwurf')) {
+    const id = shortcode(source.permalink);
+    const title = parseRecipe(source.caption)?.title || id;
+    const problems = source.manuellFreigegeben ? [] : qualityProblems(source);
+    if (!problems.length) {
+      const post = captions[id] || {};
+      const candidates = [post.imageUrlOriginal, post.imageUrl, source.image && fileURLToPath(file(`public/${source.image}`))].filter(Boolean);
+      const target = file(`public/rezepte-bilder/ig-${id}.jpg`);
+      let report = null;
+      for (const candidate of candidates) {
+        try {
+          report = makeImage(candidate, target);
+          if (report) break;
+        } catch (error) {
+          report = { error: error.message };
+        }
+      }
+      if (!report || report.error) problems.push(`Bild konnte nicht geladen werden${report?.error ? ` (${report.error})` : ''}`);
+      else if (!report.ok) problems.push(`Bild zu unscharf oder zu klein (${report.after.width} px, Schärfe ${report.after.sharpness})`);
+      else {
+        source.recipeImage = `rezepte-bilder/ig-${id}.jpg`;
+        source.bild = { methode: report.method, vorher: `${report.before.width}×${report.before.height}`, nachher: `${report.after.width}×${report.after.height}`, schaerfe: report.after.sharpness };
+      }
+    }
+    if (problems.length) {
+      source.status = 'zurueckgehalten';
+      source.grund = problems.join('; ');
+      held.push({ id, title, reasons: problems, link: source.permalink });
+    } else {
+      delete source.status;
+      source.automatischAm = new Date().toISOString();
+      published.push({ id, title, link: source.permalink, image: source.bild });
+    }
+  }
+  await saveSources(sources);
+  if (reportFile && held.length) {
+    const lines = [
+      'Der Rezept-Bot hat neue Rezepte gefunden, die er **nicht automatisch** veröffentlicht hat:', '',
+      ...held.map((h) => `- **${h.title}** ([Beitrag](${h.link}), ID \`${h.id}\`): ${h.reasons.join('; ')}`), '',
+      'Was tun: Claude den Text dieser Meldung schicken. Nach Klärung wird das Rezept mit `node scripts/recipe-bot.mjs freigeben ID` veröffentlicht oder mit `ablehnen ID` dauerhaft ausgeblendet.',
+    ];
+    await writeFile(reportFile, `${lines.join('\n')}\n`);
+  }
+  return { added, published, held };
+}
+
 async function setStatus(ids, status) {
   const sources = await readJson(sourceFile, []);
   const all = ids.includes('alle');
   const changed = [];
   for (const s of sources) {
-    if (s.status !== 'entwurf') continue;
+    if (s.status !== 'entwurf' && s.status !== 'zurueckgehalten') continue;
     if (!all && !ids.includes(shortcode(s.permalink))) continue;
-    if (status) s.status = status; else delete s.status;
+    // Freigegebene Rezepte bleiben Entwurf, überspringen aber die Inhaltsprüfung. Bild, Seite und
+    // Pin erzeugt der nächste tägliche Lauf auf GitHub.
+    s.status = status || 'entwurf';
+    if (!status) { s.manuellFreigegeben = true; delete s.grund; }
     s[status ? 'abgelehntAm' : 'freigegebenAm'] = new Date().toISOString().slice(0, 10);
     changed.push(shortcode(s.permalink));
   }
@@ -132,11 +219,19 @@ async function setStatus(ids, status) {
 if (process.argv[1]?.endsWith('recipe-bot.mjs')) {
   const [command = 'pruefen', ...ids] = process.argv.slice(2);
   try {
-    if (command === 'freigeben' || command === 'ablehnen') {
+    if (command === 'offen') {
+      // Für den GitHub-Lauf: übernimmt neue Rezepte als Entwurf und gibt nur die Anzahl offener Entwürfe aus.
+      const { drafts } = await findNewRecipes();
+      process.stdout.write(String(drafts.length));
+    } else if (command === 'auto') {
+      const { published, held } = await autoPublish({ reportFile: process.env.RECIPE_BOT_REPORT });
+      console.log(`Automatisch veröffentlicht: ${published.length}${published.map((p) => `\n  ${p.id}  ${p.title}  (Bild ${p.image?.vorher} → ${p.image?.nachher}, ${p.image?.methode})`).join('')}`);
+      console.log(`Zurückgehalten: ${held.length}${held.map((h) => `\n  ${h.id}  ${h.title}: ${h.reasons.join('; ')}`).join('')}`);
+    } else if (command === 'freigeben' || command === 'ablehnen') {
       if (!ids.length) throw new Error(`Bitte IDs angeben, zum Beispiel: node scripts/recipe-bot.mjs ${command} DfxXx-poMn6`);
       const changed = await setStatus(ids, command === 'ablehnen' ? 'abgelehnt' : null);
       console.log(changed.length ? `${command === 'ablehnen' ? 'Abgelehnt' : 'Freigegeben'}: ${changed.join(', ')}` : 'Kein passender Entwurf gefunden.');
-      if (command === 'freigeben' && changed.length) console.log('Zum Veröffentlichen: node scripts/publish-recipes.mjs und python scripts/make-pin-images.py, danach committen.');
+      if (command === 'freigeben' && changed.length) console.log('Committen und pushen: Der nächste tägliche Lauf erzeugt Bild, Seite und Pin.');
     } else if (command === 'liste') {
       const drafts = (await readJson(sourceFile, [])).filter((s) => s.status === 'entwurf');
       console.log(drafts.length ? drafts.map((s) => `${shortcode(s.permalink)}  ${parseRecipe(s.caption)?.title}`).join('\n') : 'Keine offenen Entwürfe.');

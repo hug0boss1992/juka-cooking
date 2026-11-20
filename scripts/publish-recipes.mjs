@@ -2,9 +2,9 @@
 //
 // node scripts/publish-recipes.mjs
 //
-// Quellen (lokal, nicht im Repository): intern/rezepte-quelle.json (vollständige Beschreibungen),
-// intern/rezepte-vorschlaege.json (geprüfte Zubereitung, Einleitung, Tipp) und
-// intern/rezepte-beliebtheit.json (Aufrufe je Reel aus dem Instagram-Export).
+// Quellen (im Repository): data/rezepte-quelle.json (vollständige Beschreibungen),
+// data/rezepte-korrekturen.json (geprüfte Zubereitung, Einleitung, Tipp) und
+// data/rezepte-rang.json (Reihenfolge nach Beliebtheit, ohne Aufrufzahlen).
 // Ergebnis (wird veröffentlicht): public/rezepte/*.html, rezepte.json, rezepte.css, rezepte.js.
 // Die Startseite liest public/rezepte/rezepte.json für den Bereich „Beliebteste Rezepte“.
 import { access, copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
@@ -254,20 +254,54 @@ function indexPage(recipes) {
 `;
 }
 
+// RSS-Feed für Pinterest („Pins automatisch aus RSS veröffentlichen“). Enthält nur Rezepte, die der
+// Rezept-Bot automatisch veröffentlicht hat. Ältere Rezepte werden von Hand gepinnt (siehe
+// intern/pinterest/PINTEREST-STAND.md), damit keine doppelten Pins entstehen.
+function pinterestFeed(recipes) {
+  const items = recipes.sort((a, b) => String(b.automatischAm).localeCompare(String(a.automatischAm))).slice(0, 50).map((r) => {
+    const url = `https://juka-cooking.de/rezepte/${r.slug}.html`;
+    const pin = `https://juka-cooking.de/pins/${r.slug}.jpg`;
+    const lead = (r.intro || r.title).trim().replace(/[\s,;:–-]+$/, '');
+    const text = `${/[.!?…]$/.test(lead) ? lead : `${lead}.`} Mit allen Zutaten und Schritt-für-Schritt-Anleitung auf juka-cooking.de.`;
+    return `    <item>
+      <title>${esc(r.title)}</title>
+      <link>${url}</link>
+      <guid isPermaLink="true">${url}</guid>
+      <pubDate>${new Date(r.automatischAm).toUTCString()}</pubDate>
+      <description>${esc(text)}</description>
+      <enclosure url="${pin}" type="image/jpeg" length="0"/>
+      <media:content url="${pin}" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>`;
+  }).join('\n');
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Juka Cooking – neue Rezepte</title>
+    <link>https://juka-cooking.de/rezepte/</link>
+    <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
+    <language>de-de</language>
+${items}
+  </channel>
+</rss>
+`;
+}
+
 // Neue Rezepte vom Rezept-Bot stehen mit status „entwurf“ in der Quelle und werden erst nach
 // Justynas Freigabe veröffentlicht. „abgelehnt“ wird nie gezeigt. Mit drafts: true baut die
 // Funktion zusätzlich die Entwürfe, für die Vorschau in einen anderen Zielordner.
 export async function publishRecipes({ drafts = false, target: targetDir = file('public/rezepte/') } = {}) {
-  const sources = JSON.parse(await readFile(file('intern/rezepte-quelle.json'), 'utf8'));
-  const checked = JSON.parse(await readFile(file('intern/rezepte-vorschlaege.json'), 'utf8'));
-  const views = JSON.parse(await readFile(file('intern/rezepte-beliebtheit.json'), 'utf8'));
+  // Seit 20.11.2026 im Repository (data/), damit der tägliche GitHub-Lauf neue Rezepte selbst
+  // veröffentlichen kann. rezepte-rang.json enthält nur die Reihenfolge, keine Aufrufzahlen.
+  const sources = JSON.parse(await readFile(file('data/rezepte-quelle.json'), 'utf8'));
+  const checked = JSON.parse(await readFile(file('data/rezepte-korrekturen.json'), 'utf8'));
+  const rank = JSON.parse(await readFile(file('data/rezepte-rang.json'), 'utf8'));
   const partners = await partnerLinks();
   const used = new Set();
   const slugs = new Set();
   const recipes = [];
   for (const source of sources) {
     if (source.doppeltVon || source.status === 'abgelehnt') continue;
-    if (source.status === 'entwurf' && !drafts) continue;
+    if ((source.status === 'entwurf' || source.status === 'zurueckgehalten') && !drafts) continue;
     const parsed = parseRecipe(source.caption);
     if (!parsed?.title) continue;
     let key = slugify(parsed.title) || 'rezept';
@@ -281,7 +315,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
     slugs.add(slug);
     const links = [source.permalink, ...sources.filter((s) => s.doppeltVon === source.permalink && s.permalink !== source.permalink).map((s) => s.permalink)];
     recipes.push({
-      ...parsed, key, slug, title, entwurf: source.status === 'entwurf',
+      ...parsed, key, slug, title, entwurf: Boolean(source.status), automatischAm: source.automatischAm,
       intro: cleanText(v.einleitung || parsed.intro),
       steps: v.schritte || parsed.steps,
       tip: cleanText(v.tipp || parsed.tip),
@@ -289,10 +323,11 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
       permalink: source.permalink, links, publishedAt: source.publishedAt,
       ad: isAdvertised(source.caption),
       partners: partners.filter((p) => p.match.test(source.caption)),
-      views: links.reduce((sum, link) => sum + (views[shortcode(link)]?.views || 0), 0),
+      order: rank[shortcode(source.permalink)] ?? Infinity,
     });
   }
-  recipes.sort((a, b) => b.views - a.views);
+  // Beliebteste zuerst; neue Rezepte ohne Rang hinten, neueste davon zuerst.
+  recipes.sort((a, b) => (a.order - b.order) || String(b.publishedAt).localeCompare(String(a.publishedAt)));
   recipes.forEach((r, i) => { r.rank = i + 1; r.tags = tagsOf(r); });
 
   const target = targetDir;
@@ -304,6 +339,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   const summary = recipes.map((r) => ({ slug: r.slug, title: r.title, image: r.image, rank: r.rank, minutes: r.minutes || null, links: r.links }));
   await writeFile(new URL('rezepte.json', target), `${JSON.stringify({ recipes: summary }, null, 2)}\n`);
   for (const asset of ['rezepte.css', 'rezepte.js']) await copyFile(new URL(`recipe-assets/${asset}`, import.meta.url), new URL(asset, target));
+  await writeFile(new URL('pinterest.xml', target), pinterestFeed(recipes.filter((r) => r.automatischAm && !r.entwurf)));
   return { recipes, hidden: Object.entries(hidden) };
 }
 
