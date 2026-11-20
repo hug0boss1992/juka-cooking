@@ -80,7 +80,8 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh issue create --title "Rezept-Bot: Rezept zurückgehalten ($(date -u +%d.%m.%Y))" --body-file "$RUNNER_TEMP/rezept-bericht.md"
+        run: |
+          gh issue create --title "Rezept-Bot – Rezept zurückgehalten ($(date -u +%d.%m.%Y))" --body-file "$RUNNER_TEMP/rezept-bericht.md"
       - name: Änderungen und monatliches Lebenszeichen sichern
         env:
           EVENT_NAME: ${{ github.event_name }}
