@@ -257,7 +257,18 @@ function indexPage(recipes) {
 // RSS-Feed für Pinterest („Pins automatisch aus RSS veröffentlichen“). Enthält nur Rezepte, die der
 // Rezept-Bot automatisch veröffentlicht hat. Ältere Rezepte werden von Hand gepinnt (siehe
 // intern/pinterest/PINTEREST-STAND.md), damit keine doppelten Pins entstehen.
-function pinterestFeed(recipes) {
+// Pro Pinterest-Pinnwand ein Feed (Pinterest füllt mit einem Feed genau eine Pinnwand).
+// Jedes Rezept kommt in genau einen Feed, Reihenfolge der Prüfung = Vorrang.
+export const pinterestBoards = [
+  ['kuchen-desserts', 'Kuchen & Desserts', (r) => r.tags.includes('suess')],
+  ['snacks-fruehstueck', 'Snacks & Frühstück', (r) => r.tags.includes('snack') || /frühstück|toast|brunch/i.test(`${r.title} ${r.intro}`)],
+  ['schnelle-rezepte', 'Schnelle Rezepte in 15 Minuten', (r) => (r.minutes && r.minutes <= 15) || /\b([1-9]|1[0-5])[\s-]*min/i.test(r.title)],
+  ['pasta-nudelgerichte', 'Pasta & Nudelgerichte', (r) => r.tags.includes('pasta')],
+  ['auflaeufe-hauptgerichte', 'Aufläufe & Hauptgerichte', () => true],
+];
+const boardOf = (r) => pinterestBoards.find(([, , test]) => test(r))[0];
+
+function pinterestFeed(recipes, boardTitle = 'neue Rezepte') {
   const items = recipes.sort((a, b) => String(b.automatischAm).localeCompare(String(a.automatischAm))).slice(0, 50).map((r) => {
     const url = `https://juka-cooking.de/rezepte/${r.slug}.html`;
     const pin = `https://juka-cooking.de/pins/${r.slug}.jpg`;
@@ -276,7 +287,7 @@ function pinterestFeed(recipes) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
-    <title>Juka Cooking – neue Rezepte</title>
+    <title>Juka Cooking – ${esc(boardTitle)}</title>
     <link>https://juka-cooking.de/rezepte/</link>
     <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
     <language>de-de</language>
@@ -339,7 +350,11 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   const summary = recipes.map((r) => ({ slug: r.slug, title: r.title, image: r.image, rank: r.rank, minutes: r.minutes || null, links: r.links }));
   await writeFile(new URL('rezepte.json', target), `${JSON.stringify({ recipes: summary }, null, 2)}\n`);
   for (const asset of ['rezepte.css', 'rezepte.js']) await copyFile(new URL(`recipe-assets/${asset}`, import.meta.url), new URL(asset, target));
-  await writeFile(new URL('pinterest.xml', target), pinterestFeed(recipes.filter((r) => r.automatischAm && !r.entwurf)));
+  const pinnable = recipes.filter((r) => r.automatischAm && !r.entwurf);
+  await rm(new URL('pinterest.xml', target), { force: true });
+  for (const [key, title] of pinterestBoards) {
+    await writeFile(new URL(`pinterest-${key}.xml`, target), pinterestFeed(pinnable.filter((r) => boardOf(r) === key), title));
+  }
   return { recipes, hidden: Object.entries(hidden) };
 }
 
