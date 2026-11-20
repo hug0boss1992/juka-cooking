@@ -5,6 +5,14 @@
     <link>https://juka-cooking.de/rezepte/</link>
     <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
     <language>de-de</language>
-
+    <item>
+      <title>Knusprige Käse-Wienerrollen aus der Heißluftfritteuse</title>
+      <link>https://juka-cooking.de/rezepte/knusprige-kaese-wienerrollen-aus-der-heissluftfritteuse.html</link>
+      <guid isPermaLink="true">https://juka-cooking.de/rezepte/knusprige-kaese-wienerrollen-aus-der-heissluftfritteuse.html</guid>
+      <pubDate>Fri, 20 Nov 2026 09:56:05 GMT</pubDate>
+      <description>Schneller Snack, der einfach immer geht! Perfekt für Party, Familie oder einfach zwischendurch. Außen super knusprig, innen schön cheesy und herzhaft. Mit allen Zutaten und Schritt-für-Schritt-Anleitung auf juka-cooking.de.</description>
+      <enclosure url="https://juka-cooking.de/pins/knusprige-kaese-wienerrollen-aus-der-heissluftfritteuse.jpg" type="image/jpeg" length="0"/>
+      <media:content url="https://juka-cooking.de/pins/knusprige-kaese-wienerrollen-aus-der-heissluftfritteuse.jpg" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>
   </channel>
 </rss>

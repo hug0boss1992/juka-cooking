@@ -5,6 +5,14 @@
     <link>https://juka-cooking.de/rezepte/</link>
     <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
     <language>de-de</language>
-
+    <item>
+      <title>15-Minuten Pasta mit Hackfleisch &amp; Paprika</title>
+      <link>https://juka-cooking.de/rezepte/15-minuten-pasta-mit-hackfleisch-paprika.html</link>
+      <guid isPermaLink="true">https://juka-cooking.de/rezepte/15-minuten-pasta-mit-hackfleisch-paprika.html</guid>
+      <pubDate>Fri, 20 Nov 2026 09:56:05 GMT</pubDate>
+      <description>Schnell gemacht, super einfach und richtig lecker! Perfekt für ein schnelles Mittagessen oder ein entspanntes Feierabendgericht. Herzhaft, würzig und richtig sättigend – genau das, was man manchmal braucht! Mit allen Zutaten und Schritt-für-Schritt-Anleitung auf juka-cooking.de.</description>
+      <enclosure url="https://juka-cooking.de/pins/15-minuten-pasta-mit-hackfleisch-paprika.jpg" type="image/jpeg" length="0"/>
+      <media:content url="https://juka-cooking.de/pins/15-minuten-pasta-mit-hackfleisch-paprika.jpg" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>
   </channel>
 </rss>

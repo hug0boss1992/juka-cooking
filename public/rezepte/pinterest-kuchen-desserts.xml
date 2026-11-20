@@ -5,6 +5,14 @@
     <link>https://juka-cooking.de/rezepte/</link>
     <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
     <language>de-de</language>
-
+    <item>
+      <title>Saftiger Schoko-Cheesecake-Kuchen</title>
+      <link>https://juka-cooking.de/rezepte/saftiger-schoko-cheesecake-kuchen.html</link>
+      <guid isPermaLink="true">https://juka-cooking.de/rezepte/saftiger-schoko-cheesecake-kuchen.html</guid>
+      <pubDate>Fri, 20 Nov 2026 09:56:05 GMT</pubDate>
+      <description>Schokokuchen oder Cheesecake? Warum entscheiden, wenn man beides haben kann? Saftiger Schokoteig, cremige Cheesecake-Schicht und jede Menge Schokotropfen – einfach eine richtig gute Kombi! Mit allen Zutaten und Schritt-für-Schritt-Anleitung auf juka-cooking.de.</description>
+      <enclosure url="https://juka-cooking.de/pins/saftiger-schoko-cheesecake-kuchen.jpg" type="image/jpeg" length="0"/>
+      <media:content url="https://juka-cooking.de/pins/saftiger-schoko-cheesecake-kuchen.jpg" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>
   </channel>
 </rss>

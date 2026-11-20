@@ -5,6 +5,14 @@
     <link>https://juka-cooking.de/rezepte/</link>
     <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
     <language>de-de</language>
-
+    <item>
+      <title>Cremige Hähnchen-Penne</title>
+      <link>https://juka-cooking.de/rezepte/cremige-haehnchen-penne.html</link>
+      <guid isPermaLink="true">https://juka-cooking.de/rezepte/cremige-haehnchen-penne.html</guid>
+      <pubDate>Fri, 20 Nov 2026 09:56:05 GMT</pubDate>
+      <description>Lust auf ein schnelles, cremiges und unglaublich leckeres Pasta-Gericht? Dann ist diese Hähnchen-Pasta genau das Richtige! Zarte, goldbraun angebratene Hähnchenstücke treffen auf eine wunderbar cremige Sahnesoße mit feinen Kräutern und würzigem Käse. Dazu perfekt gekochte Nudeln – einfach ein echtes Wohlfühlgericht für die ganze Familie! Mit allen Zutaten und Schritt-für-Schritt-Anleitung auf juka-cooking.de.</description>
+      <enclosure url="https://juka-cooking.de/pins/cremige-haehnchen-penne.jpg" type="image/jpeg" length="0"/>
+      <media:content url="https://juka-cooking.de/pins/cremige-haehnchen-penne.jpg" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>
   </channel>
 </rss>

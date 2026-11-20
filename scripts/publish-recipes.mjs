@@ -326,7 +326,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
     slugs.add(slug);
     const links = [source.permalink, ...sources.filter((s) => s.doppeltVon === source.permalink && s.permalink !== source.permalink).map((s) => s.permalink)];
     recipes.push({
-      ...parsed, key, slug, title, entwurf: Boolean(source.status), automatischAm: source.automatischAm,
+      ...parsed, key, slug, title, entwurf: Boolean(source.status), automatischAm: source.automatischAm || source.pinterestAb,
       intro: cleanText(v.einleitung || parsed.intro),
       steps: v.schritte || parsed.steps,
       tip: cleanText(v.tipp || parsed.tip),
