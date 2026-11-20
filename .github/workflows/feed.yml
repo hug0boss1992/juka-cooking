@@ -48,7 +48,7 @@ jobs:
             echo '::notice::BEHOLD_FEED_URL fehlt. Die Seite wird mit dem vorhandenen Feed veröffentlicht.'
           else
             node scripts/update-feed.mjs
-            git add -A -- public/
+            git add -A -- public/ data/
           fi
       - name: Änderungen und monatliches Lebenszeichen sichern
         env:

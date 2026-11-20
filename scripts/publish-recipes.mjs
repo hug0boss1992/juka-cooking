@@ -7,7 +7,7 @@
 // intern/rezepte-beliebtheit.json (Aufrufe je Reel aus dem Instagram-Export).
 // Ergebnis (wird veröffentlicht): public/rezepte/*.html, rezepte.json, rezepte.css, rezepte.js.
 // Die Startseite liest public/rezepte/rezepte.json für den Bereich „Beliebteste Rezepte“.
-import { copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { access, copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { isAdvertised } from './feed-title.mjs';
 import { parseRecipe, slugify } from './recipe-parse.mjs';
 
@@ -73,6 +73,28 @@ async function partnerLinks() {
     product && { match: /ninja|crispi/i, image: product[1], name: product[2], note: 'Die Glas-Heißluftfritteuse aus dem Video.', href: product[3], amazon: true },
     nuts && { match: /naughty\s?nuts|mr\.?\s?tom|hazel creme|happy white/i, image: 'products/naughty-nuts-logo.png', name: `Naughty Nuts${code ? ` · Code ${code}` : ''}`, note: 'Die Aufstriche aus dem Video.', href: nuts[1] },
   ].filter(Boolean);
+}
+
+// Titelbilder unter feed/ gehören dem täglichen Feed-Lauf: Bei den neuesten Beiträgen lädt er sie neu
+// und löscht die alten Dateien. Rezeptseiten bekommen deshalb eine feste Kopie unter rezepte-bilder/.
+// Fehlt die Datei schon, wird das aktuelle Titelbild desselben Beitrags aus feed.json genommen.
+async function stableImage(source, siteRoot) {
+  const current = source.recipeImage || source.image;
+  if (!current?.startsWith('feed/')) return current;
+  const name = `rezepte-bilder/ig-${shortcode(source.permalink)}.webp`;
+  const target = new URL(name, siteRoot);
+  const exists = async (url) => access(url).then(() => true, () => false);
+  if (await exists(target)) return name;
+  let from = new URL(current, siteRoot);
+  if (!(await exists(from))) {
+    const feed = JSON.parse(await readFile(new URL('feed.json', siteRoot), 'utf8')).posts;
+    const post = feed.find((p) => shortcode(p.permalink) === shortcode(source.permalink));
+    if (!post) return current;
+    from = new URL(post.image, siteRoot);
+  }
+  await mkdir(new URL('rezepte-bilder/', siteRoot), { recursive: true });
+  await copyFile(from, target);
+  return name;
 }
 
 const cleanText = (text) => (text || '').replace(/\s*@\S+/g, '').replace(/[\p{Extended_Pictographic}️‍]/gu, '').replace(/\s+/g, ' ').trim();
@@ -148,7 +170,7 @@ function recipePage(r) {
 <body>
   ${header}
   <main class="wrap rn">
-    <p class="rn-back"><a href="./">← Alle Rezepte</a></p>
+    <p class="rn-back"><a href="./">← Alle Rezepte</a></p>${r.entwurf ? '\n    <p class="rn-tip"><strong>Entwurf:</strong> Diese Seite ist noch nicht veröffentlicht und wartet auf Justynas Freigabe.</p>' : ''}
     <article>
       <div class="rn-top">
         <figure class="rn-cover"><img src="../${esc(r.image)}" alt="${esc(r.title)}" width="640" height="800"></figure>
@@ -172,13 +194,13 @@ function recipePage(r) {
         </ol>
         ${r.tip ? `<p class="rn-tip"><strong>Tipp:</strong> ${esc(r.tip)}</p>` : ''}
       </section>
-      <aside class="rn-save" aria-label="Rezept merken">
+      ${r.entwurf ? '' : `<aside class="rn-save" aria-label="Rezept merken">
         <img src="../pins/${esc(r.slug)}.jpg" alt="${esc(r.title)} – Rezeptbild zum Merken" width="1000" height="1500" loading="lazy" decoding="async">
         <div>
           <h2>Rezept für später merken</h2>
           <p>Speichere das Bild auf Pinterest oder teile den Link dieser Seite – dann findest du das Rezept jederzeit wieder.</p>
         </div>
-      </aside>
+      </aside>`}
     </article>
   </main>
   ${footer}
@@ -232,7 +254,10 @@ function indexPage(recipes) {
 `;
 }
 
-export async function publishRecipes() {
+// Neue Rezepte vom Rezept-Bot stehen mit status „entwurf“ in der Quelle und werden erst nach
+// Justynas Freigabe veröffentlicht. „abgelehnt“ wird nie gezeigt. Mit drafts: true baut die
+// Funktion zusätzlich die Entwürfe, für die Vorschau in einen anderen Zielordner.
+export async function publishRecipes({ drafts = false, target: targetDir = file('public/rezepte/') } = {}) {
   const sources = JSON.parse(await readFile(file('intern/rezepte-quelle.json'), 'utf8'));
   const checked = JSON.parse(await readFile(file('intern/rezepte-vorschlaege.json'), 'utf8'));
   const views = JSON.parse(await readFile(file('intern/rezepte-beliebtheit.json'), 'utf8'));
@@ -241,7 +266,8 @@ export async function publishRecipes() {
   const slugs = new Set();
   const recipes = [];
   for (const source of sources) {
-    if (source.doppeltVon) continue;
+    if (source.doppeltVon || source.status === 'abgelehnt') continue;
+    if (source.status === 'entwurf' && !drafts) continue;
     const parsed = parseRecipe(source.caption);
     if (!parsed?.title) continue;
     let key = slugify(parsed.title) || 'rezept';
@@ -255,11 +281,11 @@ export async function publishRecipes() {
     slugs.add(slug);
     const links = [source.permalink, ...sources.filter((s) => s.doppeltVon === source.permalink && s.permalink !== source.permalink).map((s) => s.permalink)];
     recipes.push({
-      ...parsed, key, slug, title,
+      ...parsed, key, slug, title, entwurf: source.status === 'entwurf',
       intro: cleanText(v.einleitung || parsed.intro),
       steps: v.schritte || parsed.steps,
       tip: cleanText(v.tipp || parsed.tip),
-      image: source.recipeImage || source.image,
+      image: await stableImage(source, new URL('../', targetDir)),
       permalink: source.permalink, links, publishedAt: source.publishedAt,
       ad: isAdvertised(source.caption),
       partners: partners.filter((p) => p.match.test(source.caption)),
@@ -269,7 +295,7 @@ export async function publishRecipes() {
   recipes.sort((a, b) => b.views - a.views);
   recipes.forEach((r, i) => { r.rank = i + 1; r.tags = tagsOf(r); });
 
-  const target = file('public/rezepte/');
+  const target = targetDir;
   await rm(target, { recursive: true, force: true });
   await mkdir(target, { recursive: true });
   for (const r of recipes) await writeFile(new URL(`${r.slug}.html`, target), recipePage(r));

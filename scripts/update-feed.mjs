@@ -58,7 +58,25 @@ async function downloadPost({ post, date, permalink }, index, fetchResource) {
   } };
 }
 
-export async function updateFeed(feedUrl, { directory = output, fetchResource = fetch } = {}) {
+// Vollständige Beschreibungen (mit Zeilenumbrüchen) für den Rezept-Bot. Liegt außerhalb von public/,
+// wird also nicht als Webseite ausgeliefert. Instagram-Beschreibungen sind ohnehin öffentlich.
+const captionsDefault = new URL('../data/instagram-beschreibungen.json', import.meta.url);
+
+async function storeCaptions(recent, downloads, captionsFile) {
+  const known = await readFile(captionsFile, 'utf8').then(JSON.parse).catch((error) => {
+    if (error.code === 'ENOENT') return {};
+    throw error;
+  });
+  for (const [index, { id, permalink, post, date }] of recent.entries()) {
+    if (typeof post.caption !== 'string' || !post.caption.trim()) continue;
+    known[id] = { permalink, caption: post.caption.slice(0, 5000), publishedAt: new Date(date).toISOString(), image: downloads[index].entry.image };
+  }
+  const sorted = Object.fromEntries(Object.entries(known).sort(([, a], [, b]) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt)));
+  await mkdir(new URL('./', captionsFile), { recursive: true });
+  await writeFile(captionsFile, `${JSON.stringify(sorted, null, 2)}\n`);
+}
+
+export async function updateFeed(feedUrl, { directory = output, fetchResource = fetch, captionsFile = captionsDefault } = {}) {
   if (!feedEndpoint.test(feedUrl)) throw new Error('BEHOLD_FEED_URL muss eine öffentliche feeds.behold.so-Adresse sein.');
   const response = await request(feedUrl, 'application/json', fetchResource);
   const feed = await response.json();
@@ -113,6 +131,8 @@ export async function updateFeed(feedUrl, { directory = output, fetchResource = 
   const nextManifest = new URL('feed.json.tmp', directory);
   await writeFile(nextManifest, `${manifest}\n`);
   await rename(nextManifest, manifestUrl);
+
+  if (captionsFile) await storeCaptions(recent, downloads, captionsFile);
 
   const retained = new Set(posts.map(({ image }) => image.slice('feed/'.length)));
   for (const filename of await readdir(imageDirectory)) {
