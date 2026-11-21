@@ -2,6 +2,14 @@
   {
     "id": "DbbFH3foRF1",
     "quelle": "data/bild-auftraege/DbbFH3foRF1-loeffel.png",
-    "grund": "Ultra cremiger Kartoffel-Brokkoli-Auflauf: altes Bild weich und gelbstichig (im Ofen). Neues Standbild aus dem Originalvideo bei 8,5 s, Löffel mit Kruste und cremigem Inneren. Kadir, 21.11.2026."
+    "grund": "Ultra cremiger Kartoffel-Brokkoli-Auflauf: altes Bild weich und gelbstichig (im Ofen). Neues Standbild aus dem Originalvideo bei 8,5 s, Löffel mit Kruste und cremigem Inneren. Kadir, 21.11.2026.",
+    "erledigtAm": "2026-11-21T17:09:19.358Z",
+    "ergebnis": {
+      "methode": "real-esrgan-general",
+      "vorher": "720×1280",
+      "nachher": "1080×1920",
+      "schaerfe": 173.6,
+      "quelle": "Bildauftrag"
+    }
   }
 ]
