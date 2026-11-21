@@ -97,6 +97,26 @@ async function stableImage(source, siteRoot) {
   return name;
 }
 
+// Glättet automatisch erkannte Titel, ohne etwas zu erfinden: Großschrift wird zu normaler
+// Schreibung, und Satz-Titel wie „Diese cremige Brokkoli-Käse-Pasta ist echtes Soulfood“
+// werden auf den Gerichtnamen gekürzt („Cremige Brokkoli-Käse-Pasta“).
+const smallWords = new Set(['mit', 'und', 'oder', 'aus', 'dem', 'der', 'den', 'des', 'die', 'das', 'in', 'im', 'ins', 'für', 'auf',
+  'von', 'vom', 'zu', 'zum', 'zur', 'ohne', 'nach', 'an', 'am', 'à', 'la', 'al', 'nur']);
+export function smoothTitle(text) {
+  let title = text.trim();
+  const letters = title.replace(/[^\p{L}]/gu, '');
+  if (letters.length > 4 && letters === letters.toUpperCase()) {
+    title = title.toLowerCase().split(/(\s+)/).map((word, index) => {
+      if (/^\s+$/.test(word) || (index > 0 && smallWords.has(word))) return word;
+      return word.split('-').map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join('-');
+    }).join('');
+  }
+  const sentence = /^(?:diese[rsn]?|dieses|mein(?:e[rsn]?)?|unser(?:e[rsn]?)?)\s+(.+?)\s+(?:ist|sind|macht|machen|schmeckt|schmecken|wird|werden|war|hat|haben|bringt|gelingt)\b/iu.exec(title);
+  // Nur übernehmen, wenn ein echter Gerichtname übrig bleibt (nicht „Pasta-Rezept“ o. Ä.).
+  if (sentence && sentence[1].split(/\s+/).length <= 7 && !/(rezept|gericht|idee|essen|snack)$/iu.test(sentence[1])) title = sentence[1];
+  return title.charAt(0).toUpperCase() + title.slice(1);
+}
+
 const cleanText = (text) => (text || '').replace(/\s*@\S+/g, '').replace(/[\p{Extended_Pictographic}️‍]/gu, '').replace(/\s+/g, ' ').trim();
 
 const head = (title, description, extra = '') => `<!doctype html>
@@ -320,9 +340,11 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
     used.add(key);
     if (hidden[key]) continue;
     const v = checked[key] || {};
-    const title = titles[key] || cleanText(parsed.title).replace(/\s+–\s+.*$/, '').replace(/[!…]+$/, '').trim();
-    let slug = slugify(title);
-    for (let n = 2; slugs.has(slug); n++) slug = `${slugify(title)}-${n}`;
+    const rawTitle = titles[key] || cleanText(parsed.title).replace(/\s+–\s+.*$/, '').replace(/[!…]+$/, '').trim();
+    // Die Adresse (slug) kommt weiter aus dem ungeglätteten Titel, damit Links und Pins gültig bleiben.
+    const title = titles[key] ? rawTitle : smoothTitle(rawTitle);
+    let slug = slugify(rawTitle);
+    for (let n = 2; slugs.has(slug); n++) slug = `${slugify(rawTitle)}-${n}`;
     slugs.add(slug);
     const links = [source.permalink, ...sources.filter((s) => s.doppeltVon === source.permalink && s.permalink !== source.permalink).map((s) => s.permalink)];
     recipes.push({
