@@ -1,0 +1,52 @@
+name: Rezeptbilder erneuern
+
+# Läuft, wenn ein Bildauftrag in data/bild-auftraege.json hinzukommt: Bild mit Real-ESRGAN
+# hochrechnen, Rezeptseite und Pinterest-Bild erneuern, Ergebnis committen. Das Committen löst
+# danach den normalen Lauf „Instagram-Feed und GitHub Pages“ aus, der die Seite veröffentlicht.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/bild-auftraege.json'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: juka-pages
+  cancel-in-progress: false
+
+jobs:
+  bild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Bilder hochrechnen und Rezepte erneuern
+        run: |
+          pip install --quiet 'pillow==11.3.0' 'numpy<3' 'spandrel==0.4.1' torch --extra-index-url https://download.pytorch.org/whl/cpu
+          node scripts/bild-auftraege.mjs
+      - name: Ergebnis sichern
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add -A -- data/ public/
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Rezeptbild erneuert (Bildauftrag)'
+            git push
+            gh workflow run feed.yml --ref main
+          fi
