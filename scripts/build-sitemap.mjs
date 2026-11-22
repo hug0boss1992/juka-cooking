@@ -29,7 +29,7 @@ ${entries.map((e) => `  <url><loc>${e.loc}</loc>${e.lastmod ? `<lastmod>${e.last
 </urlset>
 `;
 await writeFile(file('public/sitemap.xml'), xml);
-await writeFile(file('public/robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${site}/sitemap.xml\n`);
+await writeFile(file('public/robots.txt'), `User-agent: *\nAllow: /\nDisallow: /geschenk/\n\nSitemap: ${site}/sitemap.xml\n`);
 
 if (process.argv.includes('--neue')) {
   let live = '';

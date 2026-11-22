@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /geschenk/
 
 Sitemap: https://juka-cooking.de/sitemap.xml
