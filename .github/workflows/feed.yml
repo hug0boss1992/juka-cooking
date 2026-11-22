@@ -21,6 +21,8 @@ jobs:
     permissions:
       contents: write
       issues: write
+    outputs:
+      neue_adressen: ${{ steps.sitemap.outputs.neue }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -82,6 +84,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh issue create --title "Rezept-Bot – Rezept zurückgehalten ($(date -u +%d.%m.%Y))" --body-file "$RUNNER_TEMP/rezept-bericht.md"
+      - name: Sitemap für Suchmaschinen erzeugen
+        id: sitemap
+        run: |
+          echo "neue=$(node scripts/build-sitemap.mjs --neue)" >> "$GITHUB_OUTPUT"
+          git add -- public/sitemap.xml public/robots.txt
       - name: Änderungen und monatliches Lebenszeichen sichern
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -128,3 +135,11 @@ jobs:
       - name: GitHub Pages veröffentlichen
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Neue Seiten an Suchmaschinen melden (IndexNow, u. a. Bing)
+        if: needs.prepare.outputs.neue_adressen != '' && needs.prepare.outputs.neue_adressen != '[]'
+        continue-on-error: true
+        env:
+          ADRESSEN: ${{ needs.prepare.outputs.neue_adressen }}
+        run: |
+          body=$(jq -nc --argjson urls "$ADRESSEN" '{host:"juka-cooking.de",key:"8fe91b288d3e3309f3f2eef339ee170b",keyLocation:"https://juka-cooking.de/8fe91b288d3e3309f3f2eef339ee170b.txt",urlList:$urls}')
+          curl -sS --max-time 30 -o /dev/null -w 'IndexNow: HTTP %{http_code}\n' -H 'Content-Type: application/json; charset=utf-8' --data "$body" https://api.indexnow.org/indexnow
