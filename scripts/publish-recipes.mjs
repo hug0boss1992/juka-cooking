@@ -144,6 +144,7 @@ const header = `<header class="site-header">
     </div>
   </header>`;
 
+
 const footer = `<footer class="footer">
     <div class="wrap footer-inner">
       <a class="brand" href="../index.html">juka<span>.</span>cooking</a>
@@ -155,7 +156,36 @@ const footer = `<footer class="footer">
     </div>
   </footer>`;
 
-function recipePage(r) {
+// Google zeigt etwa 155 Zeichen der Beschreibung. Darum: Einleitung am Wortende kürzen und die
+// Fakten anhängen, die wirklich im Rezept stehen (Zeit, Portionen, Zutaten).
+function metaDescription(r, count) {
+  const tail = ` Rezept mit ${count} Zutaten${r.minutes ? `, fertig in ca. ${r.minutes} Minuten` : ''} – Schritt für Schritt erklärt.`;
+  let lead = (r.intro || r.title).replace(/\s+/g, ' ').trim();
+  const room = 158 - tail.length;
+  if (lead.length > room) {
+    const firstSentence = /^.{40,}?[.!?](?=\s|$)/.exec(lead)?.[0];
+    lead = firstSentence && firstSentence.length <= room ? firstSentence : `${lead.slice(0, room - 1).replace(/[\s,;:–-]+\S*$/, '')}…`;
+  }
+  if (!/[.!?…]$/.test(lead)) lead += '.';
+  return lead + tail;
+}
+
+// Kategorie für Google (recipeCategory) aus den Filter-Kategorien, ohne etwas zu erfinden.
+const categoryOf = (r) => (r.tags.includes('suess') ? 'Dessert & Gebäck'
+  : r.tags.includes('suppe') ? 'Suppe & Eintopf'
+    : r.tags.includes('salat') ? 'Salat & Beilage'
+      : r.tags.includes('snack') ? 'Snack & Fingerfood' : 'Hauptgericht');
+
+// Bis zu 4 ähnliche Rezepte: meiste gemeinsame Kategorien, bei Gleichstand das beliebtere.
+function relatedOf(r, all) {
+  return all.filter((o) => o !== r && !o.entwurf)
+    .map((o) => ({ o, score: o.tags.filter((t) => t !== 'schnell' && r.tags.includes(t)).length }))
+    .filter(({ score }) => score > 0)
+    .sort((a, b) => (b.score - a.score) || (a.o.rank - b.o.rank))
+    .slice(0, 4).map(({ o }) => o);
+}
+
+function recipePage(r, all = []) {
   const ingredients = r.ingredients.map((item) => /:$/.test(item)
     ? `<li class="group">${esc(item.slice(0, -1))}</li>`
     : `<li><label><input type="checkbox"> <span>${esc(item)}</span></label></li>`).join('\n              ');
@@ -163,15 +193,28 @@ function recipePage(r) {
   const facts = [r.servings && esc(r.servings), r.minutes && `ca. ${r.minutes} Min.`, `${count} Zutaten`, `${r.steps.length} Schritte`]
     .filter(Boolean).map((f) => `<li>${f}</li>`).join('');
   const products = r.partners.map((p) => `<a class="product" href="${esc(p.href)}" rel="sponsored noopener"><img src="../${esc(p.image)}" alt="" width="96" height="96"><span><span class="ad">Anzeige</span><strong>${esc(p.name)}</strong><small>${esc(p.note)}</small><em>Produkt ansehen ↗</em></span></a>${p.amazon ? '<p class="partner-disclosure">Als Amazon-Partner verdiene ich an qualifizierten Verkäufen.</p>' : ''}`).join('');
-  const schema = {
-    '@context': 'https://schema.org', '@type': 'Recipe', name: r.title, description: r.intro || undefined,
-    image: [`https://juka-cooking.de/pins/${r.slug}.jpg`, `https://juka-cooking.de/${r.image}`], author: { '@type': 'Person', name: 'Justyna' },
-    datePublished: r.publishedAt?.slice(0, 10), recipeYield: r.servings || undefined, totalTime: r.minutes ? `PT${r.minutes}M` : undefined,
-    recipeIngredient: r.ingredients.filter((x) => !/:$/.test(x)),
-    recipeInstructions: r.steps.map((text) => ({ '@type': 'HowToStep', text })),
-    video: { '@type': 'VideoObject', name: r.title, description: r.intro || r.title, contentUrl: r.permalink, thumbnailUrl: `https://juka-cooking.de/${r.image}`, uploadDate: r.publishedAt },
-  };
   const url = `https://juka-cooking.de/rezepte/${r.slug}.html`;
+  const description = metaDescription(r, count);
+  const related = relatedOf(r, all);
+  const keywords = [r.title, `${r.title} Rezept`, ...r.tags.map((t) => groups.find(([key]) => key === t)?.[1]).filter(Boolean)].join(', ');
+  // Instagram-Reels sind keine Videodatei, darum als Einbettung (embedUrl) statt contentUrl.
+  const embed = /instagram\.com\/(?:reel|p)\//.test(r.permalink) ? `${r.permalink.replace(/\/$/, '')}/embed/` : undefined;
+  const schema = [{
+    '@context': 'https://schema.org', '@type': 'Recipe', name: r.title, description: r.intro || description,
+    image: [`https://juka-cooking.de/pins/${r.slug}.jpg`, `https://juka-cooking.de/${r.image}`],
+    author: { '@type': 'Person', name: 'Justyna', url: 'https://juka-cooking.de/' },
+    datePublished: r.publishedAt?.slice(0, 10), recipeYield: r.servings || undefined, totalTime: r.minutes ? `PT${r.minutes}M` : undefined,
+    recipeCategory: categoryOf(r), keywords,
+    recipeIngredient: r.ingredients.filter((x) => !/:$/.test(x)),
+    recipeInstructions: r.steps.map((text, i) => ({ '@type': 'HowToStep', position: i + 1, text })),
+    video: embed && { '@type': 'VideoObject', name: r.title, description: r.intro || r.title, embedUrl: embed, thumbnailUrl: `https://juka-cooking.de/${r.image}`, uploadDate: r.publishedAt },
+  }, {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Startseite', item: 'https://juka-cooking.de/' },
+      { '@type': 'ListItem', position: 2, name: 'Rezepte', item: 'https://juka-cooking.de/rezepte/' },
+      { '@type': 'ListItem', position: 3, name: r.title, item: url },
+    ],
+  }];
   const pin = `https://juka-cooking.de/pins/${r.slug}.jpg`;
   // Open-Graph-Angaben: Vorschaubild für Pinterest (2:3), WhatsApp und Facebook.
   const og = `
@@ -179,12 +222,18 @@ function recipePage(r) {
   <meta property="og:type" content="article">
   <meta property="og:site_name" content="Juka Cooking">
   <meta property="og:title" content="${esc(r.title)}">
-  <meta property="og:description" content="${esc(r.intro || r.title)}">
+  <meta property="og:description" content="${esc(description)}">
   <meta property="og:url" content="${url}">
   <meta property="og:image" content="${pin}">
   <meta property="og:image:width" content="1000">
   <meta property="og:image:height" content="1500">`;
-  return `${head(`${r.title} · Rezept von Juka Cooking`, r.intro || r.title, og)}
+  const pageTitle = `${r.title} – Rezept${r.minutes ? ` in ${r.minutes} Min.` : ''} | Juka Cooking`;
+  const relatedBox = r.entwurf || !related.length ? '' : `<section class="rn-related" aria-labelledby="aehnlich"><h2 id="aehnlich">Das könnte dir auch schmecken</h2>
+        <ul class="rz-grid">
+          ${related.map((o) => `<li class="rz-card"><a href="${o.slug}.html"><div class="rz-cover"><img src="../${esc(o.image)}" alt="" loading="lazy" decoding="async" width="640" height="800"></div><h3 class="rz-title">${esc(o.title)}</h3></a></li>`).join('\n          ')}
+        </ul>
+      </section>`;
+  return `${head(pageTitle, description, og)}
   <script type="application/ld+json">${JSON.stringify(schema).replace(/</g, '\\u003c')}</script>
 </head>
 <body>
@@ -221,6 +270,7 @@ function recipePage(r) {
           <p>Speichere das Bild auf Pinterest oder teile den Link dieser Seite – dann findest du das Rezept jederzeit wieder.</p>
         </div>
       </aside>`}
+      ${relatedBox}
     </article>
   </main>
   ${footer}
@@ -242,7 +292,7 @@ function card(r) {
 function indexPage(recipes) {
   const chips = [['alle', `Alle (${recipes.length})`], ...groups.map(([key, label]) => [key, `${label} (${recipes.filter((r) => r.tags.includes(key)).length})`])]
     .map(([key, label], i) => `<button type="button" class="chip" data-filter="${key}" aria-pressed="${i === 0}">${label}</button>`).join('\n          ');
-  return `${head('Rezepte · Juka Cooking', `${recipes.length} einfache Rezepte von Justyna: Pasta, Aufläufe, Snacks und Süßes – mit Zutaten, Zubereitung und Video.`, '\n  <script src="rezepte.js" defer></script>')}
+  return `${head(`Einfache Rezepte für jeden Tag – ${recipes.length} Rezepte | Juka Cooking`, `${recipes.length} einfache Rezepte von Justyna: Pasta, Aufläufe, Snacks und Süßes – mit Zutaten, Zubereitung und Video.`, '\n  <script src="rezepte.js" defer></script>')}
 </head>
 <body>
   ${header}
@@ -348,7 +398,10 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
     slugs.add(slug);
     const links = [source.permalink, ...sources.filter((s) => s.doppeltVon === source.permalink && s.permalink !== source.permalink).map((s) => s.permalink)];
     recipes.push({
-      ...parsed, key, slug, title, entwurf: Boolean(source.status), automatischAm: source.automatischAm || source.pinterestAb,
+      ...parsed,
+      // Zwischenüberschriften ohne Doppelpunkt („Zum Servieren nach Belieben“) nicht als Zutat zählen.
+      ingredients: parsed.ingredients.map((x) => (/^(zum (servieren|garnieren|bestreuen|bestäuben|dekorieren|toppen)|für (den|die|das) [\p{L}-]+)( nach belieben)?$/iu.test(x.trim()) ? `${x.trim()}:` : x)),
+      key, slug, title, entwurf: Boolean(source.status), automatischAm: source.automatischAm || source.pinterestAb,
       intro: cleanText(v.einleitung || parsed.intro),
       steps: v.schritte || parsed.steps,
       tip: cleanText(v.tipp || parsed.tip),
@@ -366,7 +419,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   const target = targetDir;
   await rm(target, { recursive: true, force: true });
   await mkdir(target, { recursive: true });
-  for (const r of recipes) await writeFile(new URL(`${r.slug}.html`, target), recipePage(r));
+  for (const r of recipes) await writeFile(new URL(`${r.slug}.html`, target), recipePage(r, recipes));
   await writeFile(new URL('index.html', target), indexPage(recipes));
   // Für Startseite und Beitragskarten: nur Rang, keine Aufrufzahlen.
   const summary = recipes.map((r) => ({ slug: r.slug, title: r.title, image: r.image, rank: r.rank, minutes: r.minutes || null, links: r.links }));

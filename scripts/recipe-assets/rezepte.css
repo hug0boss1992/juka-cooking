@@ -78,4 +78,10 @@
 .rn-save img { display: block; width: 100%; height: auto; border-radius: 0.7rem; box-shadow: 0 6px 18px #5d4c3820; }
 .rn-save h2 { margin: 0 0 0.4rem; color: var(--green); font-size: 1.25rem; }
 .rn-save p { margin: 0; color: var(--muted); line-height: 1.55; }
+.rn-related { margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+.rn-related h2 { margin: 0 0 0.9rem; color: var(--green); font-size: 1.25rem; }
+.rn-related .rz-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 11rem), 1fr)); }
+.rn-related .rz-title { padding-bottom: 0.9rem; font-size: 1rem; }
+.rn-related .rz-cover, .rn-related .rz-cover img { aspect-ratio: 1; height: auto; object-fit: cover; }
+@media (max-width: 30rem) { .rn-related .rz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 30rem) { .rn-save { grid-template-columns: minmax(0, 7.5rem) minmax(0, 1fr); gap: 0.9rem; } }
