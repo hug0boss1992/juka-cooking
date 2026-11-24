@@ -147,8 +147,26 @@ export async function updateFeed(feedUrl, { directory = output, fetchResource = 
   return posts.length;
 }
 
+// Instagram-Follower für das Mediakit (juka-cooking.de/kooperationen). Behold liefert followersCount
+// im Feed mit; laut Behold kann der Wert ein paar Tage hinter Instagram liegen. Nur echte Zahlen
+// übernehmen, nichts schätzen. Gibt true zurück, wenn sich die Zahl geändert hat.
+const mediakitFile = new URL('../mediakit.json', import.meta.url);
+export async function updateFollowers(count, file = mediakitFile, today = new Date()) {
+  if (!Number.isInteger(count) || count <= 0) return false;
+  const data = JSON.parse(await readFile(file, 'utf8'));
+  if (data.instagram?.follower === count) return false;
+  data.instagram.follower = count;
+  data.stand.instagramFollower = today.toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Berlin' });
+  await writeFile(file, `${JSON.stringify(data, null, 2)}\n`);
+  return true;
+}
+
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   try {
+    const url = process.env.BEHOLD_FEED_URL;
+    const feed = feedEndpoint.test(url || '') ? await request(url, 'application/json', fetch).then((r) => r.json()).catch(() => ({})) : {};
+    if (await updateFollowers(feed.followersCount)) console.log(`Instagram-Follower aktualisiert: ${feed.followersCount}`);
+    else if (!Number.isInteger(feed.followersCount)) console.log('::notice::Behold-Feed enthält keine Follower-Zahl.');
     const count = await updateFeed(process.env.BEHOLD_FEED_URL);
     console.log(`${count} Beiträge im Instagram-Archiv.`);
   } catch (error) {

@@ -179,7 +179,7 @@ function page(data, feed, { preview, withPrices, priceIdeas }) {
           <div class="mk-stats">
           ${igStats}
           </div>
-          <p class="mk-source">Instagram-Statistik, ${esc(data.stand.instagram)}</p>
+          <p class="mk-source">Instagram-Statistik, ${esc(data.stand.instagram)}${data.stand.instagramFollower ? ` · Follower: Stand ${esc(data.stand.instagramFollower)}, täglich aktualisiert` : ''}</p>
         </div>
         <div class="mk-platform">
           <h3><a href="${esc(tt.profil)}">TikTok</a></h3>
