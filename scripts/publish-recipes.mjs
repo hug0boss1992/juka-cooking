@@ -7,6 +7,7 @@
 // data/rezepte-rang.json (Reihenfolge nach Beliebtheit, ohne Aufrufzahlen).
 // Ergebnis (wird veröffentlicht): public/rezepte/*.html, rezepte.json, rezepte.css, rezepte.js.
 // Die Startseite liest public/rezepte/rezepte.json für den Bereich „Beliebteste Rezepte“.
+import { existsSync, readFileSync } from 'node:fs';
 import { access, copyFile, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { isAdvertised } from './feed-title.mjs';
 import { parseRecipe, slugify } from './recipe-parse.mjs';
@@ -126,6 +127,7 @@ const head = (title, description, extra = '') => `<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${esc(description)}">
   <meta name="theme-color" content="#f8f3e9">
+  <meta name="robots" content="max-image-preview:large">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self' https://qwfbzcbcfznctzyoqbky.supabase.co; base-uri 'none'; form-action 'none'">
   <title>${esc(title)}</title>
@@ -201,7 +203,8 @@ function recipePage(r, all = []) {
   const embed = /instagram\.com\/(?:reel|p)\//.test(r.permalink) ? `${r.permalink.replace(/\/$/, '')}/embed/` : undefined;
   const schema = [{
     '@context': 'https://schema.org', '@type': 'Recipe', name: r.title, description: r.intro || description,
-    image: [`https://juka-cooking.de/pins/${r.slug}.jpg`, `https://juka-cooking.de/${r.image}`],
+    // Große Bilder (1:1, 4:3, 16:9, je 1200 px) aus scripts/make-google-images.py, sofern schon erzeugt.
+    image: [...r.googleImages.map((name) => `https://juka-cooking.de/${name}`), `https://juka-cooking.de/pins/${r.slug}.jpg`, `https://juka-cooking.de/${r.image}`],
     author: { '@type': 'Person', name: 'Justyna', url: 'https://juka-cooking.de/' },
     datePublished: r.publishedAt?.slice(0, 10), recipeYield: r.servings || undefined, totalTime: r.minutes ? `PT${r.minutes}M` : undefined,
     recipeCategory: categoryOf(r), keywords,
@@ -242,7 +245,7 @@ function recipePage(r, all = []) {
     <p class="rn-back"><a href="./">← Alle Rezepte</a></p>${r.entwurf ? '\n    <p class="rn-tip"><strong>Entwurf:</strong> Diese Seite ist noch nicht veröffentlicht und wartet auf Justynas Freigabe.</p>' : ''}
     <article>
       <div class="rn-top">
-        <figure class="rn-cover"><img src="../${esc(r.image)}" alt="${esc(r.title)}" width="640" height="800"></figure>
+        <figure class="rn-cover"><img src="../${esc(r.image)}" alt="${esc(r.title)} – Rezept von Justyna" width="640" height="800" fetchpriority="high"></figure>
         <div class="rn-side">
           ${r.ad ? '<span class="ad">Anzeige</span>' : ''}
           <h1>${esc(r.title)}</h1>
@@ -377,6 +380,13 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   const checked = JSON.parse(await readFile(file('data/rezepte-korrekturen.json'), 'utf8'));
   const rank = JSON.parse(await readFile(file('data/rezepte-rang.json'), 'utf8'));
   const partners = await partnerLinks();
+  const siteRoot = new URL('../', targetDir);
+  const googleSource = new URL('google-bilder/quelle.json', siteRoot);
+  const googleMade = existsSync(googleSource) ? JSON.parse(readFileSync(googleSource, 'utf8')) : {};
+  // Nur Bilder verwenden, die zum aktuellen Titelbild gehören (nach einem Bildauftrag sonst veraltet).
+  const googleImagesOf = (slug, image) => (googleMade[slug] === image
+    ? ['1x1', '4x3', '16x9'].map((k) => `google-bilder/${slug}-${k}.webp`).filter((name) => existsSync(new URL(name, siteRoot)))
+    : []);
   const used = new Set();
   const slugs = new Set();
   const recipes = [];
@@ -414,7 +424,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   }
   // Beliebteste zuerst; neue Rezepte ohne Rang hinten, neueste davon zuerst.
   recipes.sort((a, b) => (a.order - b.order) || String(b.publishedAt).localeCompare(String(a.publishedAt)));
-  recipes.forEach((r, i) => { r.rank = i + 1; r.tags = tagsOf(r); });
+  recipes.forEach((r, i) => { r.rank = i + 1; r.tags = tagsOf(r); r.googleImages = googleImagesOf(r.slug, r.image); });
 
   const target = targetDir;
   await rm(target, { recursive: true, force: true });

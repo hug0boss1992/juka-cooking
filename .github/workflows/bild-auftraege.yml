@@ -38,6 +38,9 @@ jobs:
         run: |
           pip install --quiet 'pillow==11.3.0' 'numpy<3' 'spandrel==0.4.1' torch --extra-index-url https://download.pytorch.org/whl/cpu
           node scripts/bild-auftraege.mjs
+          # Neues Titelbild → Google-Bilder dieses Rezepts erneuern (quelle.json erkennt den Wechsel)
+          python scripts/make-google-images.py --nur-neue
+          node scripts/publish-recipes.mjs
       - name: Ergebnis sichern
         env:
           GH_TOKEN: ${{ github.token }}

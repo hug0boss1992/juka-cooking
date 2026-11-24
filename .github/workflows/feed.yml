@@ -75,6 +75,9 @@ jobs:
           node scripts/recipe-bot.mjs auto
           node scripts/publish-recipes.mjs
           python scripts/make-pin-images.py --nur-neue
+          # Große Google-Bilder (1:1, 4:3, 16:9) für neue Rezepte, danach Seiten mit diesen Bildern neu bauen
+          python scripts/make-google-images.py --nur-neue
+          node scripts/publish-recipes.mjs
           git add -A -- data/ public/
           if [ -s "$RECIPE_BOT_REPORT" ]; then echo 'held=1' >> "$GITHUB_OUTPUT"; fi
       - name: Zurückgehaltene Rezepte melden
