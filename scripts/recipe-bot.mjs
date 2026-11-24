@@ -36,6 +36,26 @@ async function saveSources(sources) {
   await writeFile(sourceFile, `${JSON.stringify(sources, null, 1)}\n`);
 }
 
+// Zutaten vergleichbar machen: Kleinschreibung, ohne Mengen und Einheiten.
+const ingredientKey = (text) => text.toLowerCase().replace(/[\d½¼¾.,/–-]+/g, ' ')
+  .replace(/\b(g|kg|ml|l|el|tl|stk|stück|prise|packung|pck|scheiben?|zehen?|dose|becher|bund|etwas|nach|geschmack|belieben)\b/g, ' ')
+  .replace(/\s+/g, ' ').trim();
+
+// Bestehendes Rezept mit (fast) denselben Zutaten: beide mindestens 5 Zutaten, 80 % der kürzeren Liste gleich.
+export function sameIngredients(recipe, sources) {
+  const mine = new Set(recipe.ingredients.filter((x) => !/:$/.test(x)).map(ingredientKey).filter(Boolean));
+  if (mine.size < 5) return undefined;
+  for (const s of sources) {
+    if (s.doppeltVon || s.status === 'abgelehnt') continue;
+    const other = parseRecipe(s.caption);
+    if (!other?.ingredients) continue;
+    const theirs = new Set(other.ingredients.filter((x) => !/:$/.test(x)).map(ingredientKey).filter(Boolean));
+    const shared = [...mine].filter((x) => theirs.has(x)).length;
+    if (theirs.size >= 5 && shared / Math.min(mine.size, theirs.size) >= 0.8) return s.permalink;
+  }
+  return undefined;
+}
+
 export async function findNewRecipes() {
   const sources = await readJson(sourceFile, []);
   const captions = await readJson(captionsFile, {});
@@ -48,7 +68,8 @@ export async function findNewRecipes() {
     const recipe = parseRecipe(post.caption);
     if (!recipe?.title) continue;
     const entry = { caption: post.caption, permalink: post.permalink, image: post.image, publishedAt: post.publishedAt, status: 'entwurf', gefundenAm: new Date().toISOString().slice(0, 10) };
-    const twin = titles.get(slugify(recipe.title));
+    // Reposts haben oft einen neuen Titel, aber dieselben Zutaten (z. B. Brokkoli-Pasta 29.06./20.11.2026).
+    const twin = titles.get(slugify(recipe.title)) || sameIngredients(recipe, sources);
     if (twin) entry.moeglichesDoppelVon = twin;
     sources.unshift(entry);
     known.add(id);

@@ -61,7 +61,7 @@ const groups = [
   ['snack', 'Snacks & Fingerfood', /snack|fingerfood|röllchen|rolle|bagel|sandwich|aufstrich|brötchen|kartoffelringe|mini-paprika|wienerrollen|butterkartoffeln|pfannkuchen/i],
   ['suppe', 'Suppen & Eintöpfe', /suppe|eintopf|leczo/i],
   ['salat', 'Salate & Beilagen', /salat|salatası|taboul|reis mit|butterreis/i],
-  ['suess', 'Süßes', /(?<!würstchen-pfann)kuchen|cheesecake|waffel|dream|maxi-king|cinnamon|knödel|milchbrötchen|schnitte/i],
+  ['suess', 'Süßes', /(?<!würstchen-pfann)kuchen|cheesecake|waffel|dream|maxi-king|cinnamon|knödel|milchbrötchen|schnitte|cookie|keks/i],
 ];
 const tagsOf = (r) => groups.filter(([key, , re]) => (key === 'schnell' ? r.minutes && r.minutes <= 20 : re.test(r.title))).map(([key]) => key);
 
@@ -339,7 +339,9 @@ export const pinterestBoards = [
   ['pasta-nudelgerichte', 'Pasta & Nudelgerichte', (r) => r.tags.includes('pasta')],
   ['auflaeufe-hauptgerichte', 'Aufläufe & Hauptgerichte', () => true],
 ];
-const boardOf = (r) => pinterestBoards.find(([, , test]) => test(r))[0];
+// pinterestPinnwand in der Quelle hält ein schon gepinntes Rezept in seinem Feed. Wechselt es den Feed,
+// pinnt Pinterest es dort ein zweites Mal (so beim Cookie-Rezept, Pin von Hand auf Kuchen verschoben).
+const boardOf = (r) => r.pinterestPinnwand || pinterestBoards.find(([, , test]) => test(r))[0];
 
 function pinterestFeed(recipes, boardTitle = 'neue Rezepte') {
   const items = recipes.sort((a, b) => String(b.automatischAm).localeCompare(String(a.automatischAm))).slice(0, 50).map((r) => {
@@ -411,7 +413,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
       ...parsed,
       // Zwischenüberschriften ohne Doppelpunkt („Zum Servieren nach Belieben“) nicht als Zutat zählen.
       ingredients: parsed.ingredients.map((x) => (/^(zum (servieren|garnieren|bestreuen|bestäuben|dekorieren|toppen)|für (den|die|das) [\p{L}-]+)( nach belieben)?$/iu.test(x.trim()) ? `${x.trim()}:` : x)),
-      key, slug, title, entwurf: Boolean(source.status), automatischAm: source.automatischAm || source.pinterestAb,
+      key, slug, title, entwurf: Boolean(source.status), pinterestPinnwand: source.pinterestPinnwand, automatischAm: source.automatischAm || source.pinterestAb,
       intro: cleanText(v.einleitung || parsed.intro),
       steps: v.schritte || parsed.steps,
       tip: cleanText(v.tipp || parsed.tip),
