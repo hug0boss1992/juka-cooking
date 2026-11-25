@@ -2,7 +2,8 @@
   "_hinweis": "Daten für juka-cooking.de/kooperationen. Erzeugt wird die Seite mit: node scripts/build-mediakit.mjs. Der Statistik-Bot aktualisiert die Zahlen hier monatlich. null bedeutet: Wert fehlt noch (in der Vorschau als Platzhalter markiert, auf der Live-Seite ausgeblendet).",
   "stand": {
     "instagram": "17. August bis 16. November 2026",
-    "tiktok": "TikTok Studio, 19. November 2026"
+    "tiktok": "TikTok Studio, 19. November 2026",
+    "instagramFollower": "25. November 2026"
   },
   "kopf": {
     "name": "Justyna",
@@ -12,7 +13,7 @@
   },
   "instagram": {
     "profil": "https://www.instagram.com/juka.cooking/",
-    "follower": 20453,
+    "follower": 20979,
     "wachstumQuartal": 98,
     "erreichteKonten": 4800000,
     "nichtFollowerAnteil": 99.7,
