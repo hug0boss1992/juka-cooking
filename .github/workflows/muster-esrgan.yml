@@ -1,0 +1,26 @@
+name: Muster-Bilder schärfen (Test)
+on:
+  push:
+    branches: [muster-karten]
+    paths: ['muster/frames/**', 'muster/esrgan-muster.py']
+permissions: {}
+jobs:
+  schaerfen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: |
+          pip install --quiet 'pillow==11.3.0' 'numpy<3' 'spandrel==0.4.1' torch --extra-index-url https://download.pytorch.org/whl/cpu
+          python muster/esrgan-muster.py
+      - run: |
+          git add muster/hd
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Muster-Bilder geschärft (Test)'
+          git push
