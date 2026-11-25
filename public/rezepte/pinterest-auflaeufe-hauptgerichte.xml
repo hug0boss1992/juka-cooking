@@ -5,6 +5,14 @@
     <link>https://juka-cooking.de/rezepte/</link>
     <description>Neue einfache Rezepte von Justyna mit Zutaten und Zubereitung.</description>
     <language>de-de</language>
-
+    <item>
+      <title>Cremiger Kartoffel-Brokkoli-Hähnchen-Auflauf</title>
+      <link>https://juka-cooking.de/rezepte/cremiger-kartoffel-brokkoli-haehnchen-auflauf.html</link>
+      <guid isPermaLink="true">https://juka-cooking.de/rezepte/cremiger-kartoffel-brokkoli-haehnchen-auflauf.html</guid>
+      <pubDate>Wed, 25 Nov 2026 22:17:39 GMT</pubDate>
+      <description>Einfach, cremig und unglaublich lecker! Perfekt für ein schnelles Familienessen oder Meal Prep. Die Kombination aus zarten Kartoffeln, saftigem Hähnchen, frischem Brokkoli und einer cremigen Béchamelsoße macht diesen Auflauf zum absoluten Wohlfühlgericht. Mit allen Zutaten und Schritt-für-Schritt-Anleitung auf juka-cooking.de.</description>
+      <enclosure url="https://juka-cooking.de/pins/cremiger-kartoffel-brokkoli-haehnchen-auflauf.jpg" type="image/jpeg" length="0"/>
+      <media:content url="https://juka-cooking.de/pins/cremiger-kartoffel-brokkoli-haehnchen-auflauf.jpg" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>
   </channel>
 </rss>
