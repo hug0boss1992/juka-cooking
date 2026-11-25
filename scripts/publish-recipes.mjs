@@ -413,7 +413,7 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
       ...parsed,
       // Zwischenüberschriften ohne Doppelpunkt („Zum Servieren nach Belieben“) nicht als Zutat zählen.
       ingredients: parsed.ingredients.map((x) => (/^(zum (servieren|garnieren|bestreuen|bestäuben|dekorieren|toppen)|für (den|die|das) [\p{L}-]+)( nach belieben)?$/iu.test(x.trim()) ? `${x.trim()}:` : x)),
-      key, slug, title, entwurf: Boolean(source.status), pinterestPinnwand: source.pinterestPinnwand, automatischAm: source.automatischAm || source.pinterestAb,
+      key, slug, title, entwurf: Boolean(source.status), pinterestPinnwand: source.pinterestPinnwand, pinterestAus: Boolean(source.pinterestAus), automatischAm: source.automatischAm || source.pinterestAb,
       intro: cleanText(v.einleitung || parsed.intro),
       steps: v.schritte || parsed.steps,
       tip: cleanText(v.tipp || parsed.tip),
@@ -437,7 +437,8 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   const summary = recipes.map((r) => ({ slug: r.slug, title: r.title, image: r.image, rank: r.rank, minutes: r.minutes || null, links: r.links }));
   await writeFile(new URL('rezepte.json', target), `${JSON.stringify({ recipes: summary }, null, 2)}\n`);
   for (const asset of ['rezepte.css', 'rezepte.js']) await copyFile(new URL(`recipe-assets/${asset}`, import.meta.url), new URL(asset, target));
-  const pinnable = recipes.filter((r) => r.automatischAm && !r.entwurf);
+  // pinterestAus: Rezept steht in keinem Feed mehr (sein Pin bleibt bestehen, Pinterest pinnt nicht nach).
+  const pinnable = recipes.filter((r) => r.automatischAm && !r.entwurf && !r.pinterestAus);
   await rm(new URL('pinterest.xml', target), { force: true });
   for (const [key, title] of pinterestBoards) {
     await writeFile(new URL(`pinterest-${key}.xml`, target), pinterestFeed(pinnable.filter((r) => boardOf(r) === key), title));
