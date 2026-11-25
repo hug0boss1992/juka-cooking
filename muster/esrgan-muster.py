@@ -6,7 +6,7 @@ from esrgan_torch import upscale
 src = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frames')
 out = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'hd')
 os.makedirs(out, exist_ok=True)
-for name in sorted(os.listdir(src)):
+for name in sorted(n for n in os.listdir(src) if not os.path.exists(os.path.join(out, n[:-4] + '-x4plus.jpg'))):
     img = Image.open(os.path.join(src, name)).convert('RGB')
     for model in ('general', 'x4plus'):
         big = upscale(img, model)
