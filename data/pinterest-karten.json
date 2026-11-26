@@ -198,6 +198,60 @@
    "ab": "2026-12-07",
    "pinnwand": "kuchen-desserts",
    "art": "erster Pin"
+  },
+  {
+   "slug": "15-minuten-pasta-mit-hackfleisch-paprika",
+   "ab": "2026-12-08",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "cremige-kartoffelpfanne-mit-bacon-champignons",
+   "ab": "2026-12-08",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "saftiger-schoko-cheesecake-kuchen",
+   "ab": "2026-12-08",
+   "pinnwand": "kuchen-desserts",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "wuerziger-penne-bolognese-auflauf-aus-der-ninja-crispi",
+   "ab": "2026-12-09",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "knusprige-mini-butterkartoffeln-mit-knoblauch-kraeutern",
+   "ab": "2026-12-09",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "ultra-cremiger-kartoffel-brokkoli-auflauf",
+   "ab": "2026-12-09",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "butterreis-mit-geroesteten-suppennudeln",
+   "ab": "2026-12-10",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremiger-reis-eintopf-mit-hackfleischbaellchen",
+   "ab": "2026-12-10",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremiger-nudelauflauf-mit-bechamelsosse-aus-dem-ninja-crispi",
+   "ab": "2026-12-10",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "zweiter Pin"
   }
  ]
 }
