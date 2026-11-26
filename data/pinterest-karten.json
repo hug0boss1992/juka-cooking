@@ -1,0 +1,203 @@
+{
+ "_hinweis": "Rezeptkarten-Pins: ab dem Datum (Berliner Zeit) erscheinen sie im Pinterest-Feed der Pinnwand (guid <url>#karte). Bilder in public/pins-karten/. Plan: intern/pinterest/KARTEN-PLAN.md",
+ "karten": [
+  {
+   "slug": "kartoffel-gyros-auflauf-mit-kaesekruste",
+   "ab": "2026-11-27",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "one-pot-rigatoni-mit-frischkaese-cheddar",
+   "ab": "2026-11-27",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-kaese-sahne-pasta-mit-brokkoli",
+   "ab": "2026-11-27",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "one-pot-brokkoli-pasta",
+   "ab": "2026-11-28",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-tortellini-mit-schinken-aus-der-ninja-crispi",
+   "ab": "2026-11-28",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "herzhafte-wuerstchen-pfannkuchen",
+   "ab": "2026-11-28",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "cremige-fusilli-mit-hackbaellchen-in-tomatensosse",
+   "ab": "2026-11-29",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-orzo-pfanne-mit-garnelen-cabanossi",
+   "ab": "2026-11-29",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremiger-haehnchen-nudel-auflauf",
+   "ab": "2026-11-29",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "one-pot-orzo-alfredo-mit-haehnchen",
+   "ab": "2026-11-30",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-rote-pesto-nudeln",
+   "ab": "2026-11-30",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-one-pot-tagliatelle-mit-champignons",
+   "ab": "2026-11-30",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "knusprige-tortilla-schinken-kaese-rolle-aus-dem-ofen",
+   "ab": "2026-12-01",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "pizza-bagels-in-nur-15-minuten",
+   "ab": "2026-12-01",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "hackbaellchen-in-cremiger-sauce-mit-kartoffelpueree",
+   "ab": "2026-12-01",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "mini-paprikas-mit-camembert-im-speckmantel",
+   "ab": "2026-12-02",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-alfredo-pasta-mit-haehnchen-champignons",
+   "ab": "2026-12-02",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "der-cremigste-kartoffelauflauf-ueberhaupt",
+   "ab": "2026-12-02",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "erdbeer-schmand-kuchen",
+   "ab": "2026-12-03",
+   "pinnwand": "kuchen-desserts",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "fluffige-butterbroetchen",
+   "ab": "2026-12-03",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "tortilla-roellchen-mit-philadelphia-wiener-wuerstchen",
+   "ab": "2026-12-03",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "cremige-one-pot-orzo-pfanne-mit-champignons-spinat",
+   "ab": "2026-12-04",
+   "pinnwand": "pasta-nudelgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremiger-kartoffel-haehnchen-auflauf",
+   "ab": "2026-12-04",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "knusprige-kaese-wienerrollen-aus-der-heissluftfritteuse",
+   "ab": "2026-12-04",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "no-bake-white-raspberry-dream",
+   "ab": "2026-12-05",
+   "pinnwand": "kuchen-desserts",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "maxi-king-schnitte-ohne-backen",
+   "ab": "2026-12-05",
+   "pinnwand": "kuchen-desserts",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "cremige-haehnchen-bacon-tortilla-pfanne",
+   "ab": "2026-12-05",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "hackbaellchen-in-paprika-sahne-sosse",
+   "ab": "2026-12-06",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "ofen-tomatensuppe",
+   "ab": "2026-12-06",
+   "pinnwand": "auflaeufe-hauptgerichte",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "saftige-chocolate-chip-cookies-aus-meiner-ninja-crispipro",
+   "ab": "2026-12-06",
+   "pinnwand": "kuchen-desserts",
+   "art": "zweiter Pin"
+  },
+  {
+   "slug": "mini-cinnamon-roll-cheesecake",
+   "ab": "2026-12-07",
+   "pinnwand": "kuchen-desserts",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "thunfisch-ei-aufstrich-mit-butter-baguette",
+   "ab": "2026-12-07",
+   "pinnwand": "snacks-fruehstueck",
+   "art": "erster Pin"
+  },
+  {
+   "slug": "knuspriger-beeren-streuselkuchen",
+   "ab": "2026-12-07",
+   "pinnwand": "kuchen-desserts",
+   "art": "erster Pin"
+  }
+ ]
+}

@@ -82,6 +82,13 @@ jobs:
           node scripts/publish-recipes.mjs
           git add -A -- data/ public/
           if [ -s "$RECIPE_BOT_REPORT" ]; then echo 'held=1' >> "$GITHUB_OUTPUT"; fi
+      # Rezeptkarten aus data/pinterest-karten.json am geplanten Tag in die Pinterest-Feeds aufnehmen
+      # (3 pro Tag). Läuft täglich, auch wenn es keine neuen Rezepte gibt.
+      - name: Pinterest-Rezeptkarten freischalten
+        if: github.event_name != 'push'
+        run: |
+          node scripts/publish-recipes.mjs
+          git add -A -- public/rezepte/
       - name: Zurückgehaltene Rezepte melden
         if: steps.publish.outputs.held == '1'
         continue-on-error: true

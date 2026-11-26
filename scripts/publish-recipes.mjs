@@ -343,8 +343,25 @@ export const pinterestBoards = [
 // pinnt Pinterest es dort ein zweites Mal (so beim Cookie-Rezept, Pin von Hand auf Kuchen verschoben).
 const boardOf = (r) => r.pinterestPinnwand || pinterestBoards.find(([, , test]) => test(r))[0];
 
-function pinterestFeed(recipes, boardTitle = 'neue Rezepte') {
-  const items = recipes.sort((a, b) => String(b.automatischAm).localeCompare(String(a.automatischAm))).slice(0, 50).map((r) => {
+// Rezeptkarten (data/pinterest-karten.json): ab dem geplanten Tag als eigener Eintrag im Feed der
+// Pinnwand. Eigene guid (<url>#karte), damit Pinterest sie als neuen Pin anlegt; Link bleibt die Rezeptseite.
+function cardItem(r, card) {
+  const url = `https://juka-cooking.de/rezepte/${r.slug}.html`;
+  const img = `https://juka-cooking.de/pins-karten/${r.slug}.jpg`;
+  const text = `Alle Zutaten auf einen Blick – ${r.title}. Die Zubereitung Schritt für Schritt findest du auf juka-cooking.de.`;
+  return { date: `${card.ab}T07:00:00Z`, xml: `    <item>
+      <title>${esc(r.title)} – Rezept mit Zutaten</title>
+      <link>${url}</link>
+      <guid isPermaLink="false">${url}#karte</guid>
+      <pubDate>${new Date(`${card.ab}T07:00:00Z`).toUTCString()}</pubDate>
+      <description>${esc(text)}</description>
+      <enclosure url="${img}" type="image/jpeg" length="0"/>
+      <media:content url="${img}" medium="image" type="image/jpeg" width="1000" height="1500"/>
+    </item>` };
+}
+
+function pinterestFeed(recipes, boardTitle = 'neue Rezepte', cards = []) {
+  const recipeItems = recipes.sort((a, b) => String(b.automatischAm).localeCompare(String(a.automatischAm))).slice(0, 50).map((r) => {
     const url = `https://juka-cooking.de/rezepte/${r.slug}.html`;
     const pin = `https://juka-cooking.de/pins/${r.slug}.jpg`;
     const lead = (r.intro || r.title).trim().replace(/[\s,;:–-]+$/, '');
@@ -358,7 +375,10 @@ function pinterestFeed(recipes, boardTitle = 'neue Rezepte') {
       <enclosure url="${pin}" type="image/jpeg" length="0"/>
       <media:content url="${pin}" medium="image" type="image/jpeg" width="1000" height="1500"/>
     </item>`;
-  }).join('\n');
+  }).map((xml, i, all) => ({ date: '', xml }));
+  // Rezept-Einträge behalten ihre Reihenfolge; Karten kommen nach Datum sortiert davor (neueste zuerst).
+  const cardItems = cards.sort((a, b) => b.date.localeCompare(a.date));
+  const items = [...cardItems, ...recipeItems].map((x) => x.xml).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
@@ -439,9 +459,15 @@ export async function publishRecipes({ drafts = false, target: targetDir = file(
   for (const asset of ['rezepte.css', 'rezepte.js']) await copyFile(new URL(`recipe-assets/${asset}`, import.meta.url), new URL(asset, target));
   // pinterestAus: Rezept steht in keinem Feed mehr (sein Pin bleibt bestehen, Pinterest pinnt nicht nach).
   const pinnable = recipes.filter((r) => r.automatischAm && !r.entwurf && !r.pinterestAus);
+  // Freigeschaltete Rezeptkarten: Datum erreicht (Berliner Zeit) und Bild vorhanden
+  const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' });
+  const plan = existsSync(file('data/pinterest-karten.json')) ? JSON.parse(readFileSync(file('data/pinterest-karten.json'), 'utf8')).karten : [];
+  const plannedCards = plan.filter((c) => c.ab <= today && existsSync(new URL(`pins-karten/${c.slug}.jpg`, siteRoot)));
+  const bySlug = new Map(recipes.filter((r) => !r.entwurf).map((r) => [r.slug, r]));
   await rm(new URL('pinterest.xml', target), { force: true });
   for (const [key, title] of pinterestBoards) {
-    await writeFile(new URL(`pinterest-${key}.xml`, target), pinterestFeed(pinnable.filter((r) => boardOf(r) === key), title));
+    const cards = plannedCards.filter((c) => c.pinnwand === key && bySlug.has(c.slug)).map((c) => cardItem(bySlug.get(c.slug), c));
+    await writeFile(new URL(`pinterest-${key}.xml`, target), pinterestFeed(pinnable.filter((r) => boardOf(r) === key), title, cards));
   }
   return { recipes, hidden: Object.entries(hidden) };
 }
