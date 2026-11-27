@@ -209,7 +209,8 @@ function recipePage(r, all = []) {
     datePublished: r.publishedAt?.slice(0, 10), recipeYield: r.servings || undefined, totalTime: r.minutes ? `PT${r.minutes}M` : undefined,
     recipeCategory: categoryOf(r), keywords,
     recipeIngredient: r.ingredients.filter((x) => !/:$/.test(x)),
-    recipeInstructions: r.steps.map((text, i) => ({ '@type': 'HowToStep', position: i + 1, text })),
+    // name + url je Schritt (Hinweis der Search Console); Sprungmarken #schritt-N stehen an den <li> der Seite.
+    recipeInstructions: r.steps.map((text, i) => ({ '@type': 'HowToStep', position: i + 1, name: `Schritt ${i + 1}`, text, url: `${url}#schritt-${i + 1}` })),
     video: embed && { '@type': 'VideoObject', name: r.title, description: r.intro || r.title, embedUrl: embed, thumbnailUrl: `https://juka-cooking.de/${r.image}`, uploadDate: r.publishedAt },
   }, {
     '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
@@ -262,7 +263,7 @@ function recipePage(r, all = []) {
       </div>
       <section class="rn-steps" aria-labelledby="zubereitung"><h2 id="zubereitung">Zubereitung</h2>
         <ol>
-          ${r.steps.map((s) => `<li>${esc(s)}</li>`).join('\n          ')}
+          ${r.steps.map((s, i) => `<li id="schritt-${i + 1}">${esc(s)}</li>`).join('\n          ')}
         </ol>
         ${r.tip ? `<p class="rn-tip"><strong>Tipp:</strong> ${esc(r.tip)}</p>` : ''}
       </section>
